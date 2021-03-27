@@ -1,9 +1,14 @@
-#szybka transformata Fouriera
 import cv2
 import numpy as np
-#import glob
 
-def fourier(file_name: str):
+"""
+Funkcja fourier przeznaczona do realizowania obliczenia i wyświetlenia transformaty fouriera z obrazu
+
+Parametry:
+    file_name - nazwa pliku.
+"""
+
+def fourier(file_name):
     
     img = cv2.imread(file_name, cv2.IMREAD_GRAYSCALE)
 
@@ -14,12 +19,12 @@ def fourier(file_name: str):
     magnitude_spectrum = 20 * np.log(np.abs(fshift))
     magnitude_spectrum = np.asarray(magnitude_spectrum, dtype = np.uint8)
 
-    # liczenie modufazy
+    # liczenie fazy
     phase_spectrum = np.angle(fshift)
     phase_spectrum = np.asarray(phase_spectrum, dtype = np.uint8)
 
     # wyświetlanie
-    cv2.imshow("Obraz", img)
+    cv2.imshow("Obraz w odcieniach szarosci", img)
     cv2.imshow("Faza widma", phase_spectrum)
     cv2.imshow("Modul widma", magnitude_spectrum)
 
