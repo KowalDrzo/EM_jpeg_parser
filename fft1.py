@@ -1,9 +1,14 @@
-#szybka transformata Fouriera
 import cv2
 import numpy as np
-#import glob
 
-def fourier(file_name: str):
+"""
+Funkcja fourier przeznaczona do realizowania obliczenia i wyświetlenia transformaty fouriera z obrazu
+
+Parametry:
+    file_name - nazwa pliku.
+"""
+
+def fourier(file_name):
     
     img = cv2.imread(file_name, cv2.IMREAD_GRAYSCALE)
 
