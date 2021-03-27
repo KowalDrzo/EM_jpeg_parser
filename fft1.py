@@ -24,7 +24,7 @@ def fourier(file_name):
     phase_spectrum = np.asarray(phase_spectrum, dtype = np.uint8)
 
     # wyświetlanie
-    cv2.imshow("Obraz", img)
+    cv2.imshow("Obraz w odcieniach szarosci", img)
     cv2.imshow("Faza widma", phase_spectrum)
     cv2.imshow("Modul widma", magnitude_spectrum)
 

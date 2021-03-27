@@ -1,4 +1,7 @@
+#!/usr/bin/python3
 import fft1
+import show
+import parser
 
 """
 Funkcja print_menu do wyświetlania menu głównego programu.
@@ -9,10 +12,9 @@ def print_menu():
     1. Wyświetl obraz
     2. Wypisz informacje o obrazie
     3. Wyświetl transformatę obrazu
-    4. Zapisz obraz usuwając metadane
+    4. Zapisz obraz usuwając zbędne metadane
     5. Wyjdź
-
-    Wybrano:""")
+    """)
 
 ############################################################################################
 
@@ -20,20 +22,23 @@ def print_menu():
 Główny kod programu - obsługa menu.
 """
 
-print("\nProgram do parsowania plików JPEG. Podaj nazwę pliku do wczytania:")
-file_name = input()
+print("\nProgram do parsowania plików JPEG")
 
+# Sprawdzanie poprawności otworzenia pliku
+file_name = show.check_file()
+
+# Obsługa menu
 while 1:
 
     print_menu()
-    choice = input()
+    choice = input("Wybrano: ")
 
 
     if choice == "1":
-        pass
+        show.show_image(file_name)
 
     elif choice == "2":
-        pass
+        parser.parse_jpg(file_name)
 
     elif choice == "3":
         fft1.fourier(file_name)
