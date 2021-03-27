@@ -1,5 +1,5 @@
 from PIL import Image
 
-img = Image.open("led1.jpg")
+img = Image.open("Obraz/led1.jpg")
 img.show()
 
