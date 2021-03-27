@@ -14,7 +14,7 @@ def fourier(file_name: str):
     magnitude_spectrum = 20 * np.log(np.abs(fshift))
     magnitude_spectrum = np.asarray(magnitude_spectrum, dtype = np.uint8)
 
-    # liczenie modufazy
+    # liczenie fazy
     phase_spectrum = np.angle(fshift)
     phase_spectrum = np.asarray(phase_spectrum, dtype = np.uint8)
 
