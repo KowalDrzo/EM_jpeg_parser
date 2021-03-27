@@ -18,7 +18,16 @@ def show_image(file_name):
 Funkcja check_file, sprawdza czy plik o podanej nazwie jest dostępny, jeśli nie, to prosi o nową nazwę. Na koniec zwraca prawidłową nazwę.
 """
 
-def check_file() -> str:
+def check_file(args: list) -> str:
+
+    if len(args) > 1:
+        print("Plik czytany z argumentu: " + args[1])
+        try:
+            file = open(args[1], "rb")
+        except IOError:
+            print("Błędna nazwa pliku w argumencie!\n\n")
+        else:
+            return args[1]
 
     while 1:
 

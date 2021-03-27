@@ -2,6 +2,7 @@
 import fft1
 import show
 import parser
+import sys
 
 """
 Funkcja print_menu do wyświetlania menu głównego programu.
@@ -25,7 +26,7 @@ Główny kod programu - obsługa menu.
 print("\nProgram do parsowania plików JPEG")
 
 # Sprawdzanie poprawności otworzenia pliku
-file_name = show.check_file()
+file_name = show.check_file(sys.argv)
 
 # Obsługa menu
 while 1:
