@@ -5,36 +5,34 @@ Funkcja parse_jpg służy do parsowania pliku jpg celem wyciągnięcia informacj
 """
 
 def parse_jpg(file_name):
-    
-    file = open(file_name, "rb")
 
-    pic_inf = pinf.PictureInfo()
-    pic_inf.check_soi(file)
+    pic_inf = pinf.PictureInfo(file_name)
+    pic_inf.check_soi()
 
     while True:
 
-        chunk = pic_inf.read_chunk_name(file)
+        chunk = pic_inf.read_chunk_nl()
 
         if chunk == 0xffe0:
-            pic_inf.read_adh(file)
+            pic_inf.read_adh()
 
         elif chunk == 0xffdb:
-            pic_inf.read_qt(file)
+            pic_inf.read_qt()
 
         elif chunk == 0xffc0:
-            pic_inf.read_sof(file)
+            pic_inf.read_sof()
 
         elif chunk == 0xffc4:
-            pic_inf.read_dht(file)
+            pic_inf.read_dht()
 
         elif chunk == 0xffda:
-            pic_inf.read_image(file)
-        
-        elif chunk == 0xffd9:
+            pic_inf.read_image()
             break
+        
+        #elif chunk == 0xffd9:
+         #   break
 
         else:
-            pic_inf.skipchunk(file)
+            pic_inf.skip_chunk()
 
     print("Koniec pliku")
-    file.close()

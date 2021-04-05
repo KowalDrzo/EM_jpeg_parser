@@ -1,27 +1,27 @@
 
 class PictureInfo:
 
+    file = None
+    binary_image = []
 
     ############################################################################################
 
-    def __init__(self):
-        pass
+    def __init__(self, file_name):
+        self.file = open(file_name, "rb")
 
     def __del__(self):
-        pass
+        self.file.close()
 
     ############################################################################################
 
-    def read_chunk_name(self, file) -> int:
-        chunk_name = file.read(2)
-        print(chunk_name)
-        return int.from_bytes(chunk_name, "big")
+    def read_chunk_nl(self) -> int:
+        return int.from_bytes(self.file.read(2), "big")
 
     ############################################################################################
 
-    def check_soi(self, file):
+    def check_soi(self):
 
-        int_byte = self.read_chunk_name()
+        int_byte = self.read_chunk_nl()
 
         if int_byte != 0xffd8:
             
@@ -30,54 +30,62 @@ class PictureInfo:
 
     ############################################################################################
 
-    def read_adh(self, file):
+    def read_adh(self):
 
-        chunk_len = int.from_bytes(file.read(2), "big")
-        file.read(chunk_len)
+        chunk_len = self.read_chunk_nl() -2
+        test = self.file.read(chunk_len)
 
         print("Wykryto chunk ADH")
 
     ############################################################################################
 
-    def read_qt(self, file):
+    def read_qt(self):
 
-        chunk_len = int.from_bytes(file.read(2), "big")
-        file.read(chunk_len)
+        chunk_len = self.read_chunk_nl() -2
+        test = self.file.read(chunk_len)
 
         print("Wykryto chunk QT")
 
     ############################################################################################
 
-    def read_sof(self, file):
+    def read_sof(self):
 
-        chunk_len = int.from_bytes(file.read(2), "big")
-        file.read(chunk_len)
+        chunk_len = self.read_chunk_nl() -2
+        test = self.file.read(chunk_len)
 
         print("Wykryto chunk SOF")
 
     ############################################################################################
 
-    def read_dht(self, file):
+    def read_dht(self):
 
-        chunk_len = int.from_bytes(file.read(2), "big")
-        file.read(chunk_len)
+        chunk_len = self.read_chunk_nl() -2
+        test = self.file.read(chunk_len)
 
         print("Wykryto chunk DHT")
     
     ############################################################################################
 
-    def read_image(self, file):
+    def read_image(self):
 
-        chunk_len = int.from_bytes(file.read(2), "big")
-        file.read(chunk_len)
+        chunk_len = self.read_chunk_nl() -2
+        test = self.file.read(chunk_len)
+
+        while True:
+            test = int.from_bytes(self.file.read(1), "big")
+            if test != 0xff:
+                self.binary_image.append(test)
+            else:
+                if int.from_bytes(self.file.read(1), "big") == 0xd9:
+                    break
 
         print("Wykryto dane binarne zdjęcia")
 
     ############################################################################################
 
-    def skipchunk(self, file):
+    def skip_chunk(self):
 
-        chunk_len = int.from_bytes(file.read(2), "big")
-        file.read(chunk_len)
+        chunk_len = self.read_chunk_nl() -2
+        test = self.file.read(chunk_len)
 
         print("Wykryto jakiś inny chunk o długości " + str(chunk_len))
