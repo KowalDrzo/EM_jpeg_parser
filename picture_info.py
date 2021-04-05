@@ -135,7 +135,7 @@ class PictureInfo:
         chunk_len = self.read_chunk_nl()
         test = self.file.read(chunk_len - 2)
 
-        print("Wykryto dane binarne zdjęcia")
+        print("Wykryto chunk Start skanu oraz skompresowane dane zdjęcia")
 
         data_bit = 1
         while True:
