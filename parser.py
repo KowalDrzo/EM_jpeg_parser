@@ -19,15 +19,33 @@ def parse_jpg(pic_inf):
         elif chunk == 0xffc0:
             pic_inf.read_sof()
 
+        elif chunk == 0xffc2:
+            pic_inf.read_sof2()
+
         elif chunk == 0xffc4:
             pic_inf.read_dht()
+        
+        elif chunk == 0xffe1:
+            pic_inf.read_exif()
+        
+        elif chunk == 0xffe4:
+            pic_inf.read_app4()
+
+        elif chunk == 0xffdd:
+            pic_inf.read_reset()
+
+        elif chunk == 0xfffe:
+            pic_inf.read_comment()
+        
+        elif chunk == 0xffe2:
+            pic_inf.read_icc()
 
         elif chunk == 0xffda:
             pic_inf.read_image()
             break
 
         else:
-            pic_inf.skip_chunk()
+            pic_inf.skip_chunk(chunk)
 
     print("Zakończono parsowanie pliku")
 

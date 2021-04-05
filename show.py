@@ -21,7 +21,7 @@ Funkcja check_file, sprawdza czy plik o podanej nazwie jest dostępny, jeśli ni
 def check_file(args: list) -> str:
 
     if len(args) > 1:
-        print("Plik czytany z argumentu: " + args[1])
+        print("Plik czytany z argumentu: " + args[1] + "\n\n")
         try:
             file = open(args[1], "rb")
         except IOError:
