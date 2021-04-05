@@ -28,11 +28,8 @@ def parse_jpg(file_name):
         elif chunk == 0xffda:
             pic_inf.read_image()
             break
-        
-        #elif chunk == 0xffd9:
-         #   break
 
         else:
             pic_inf.skip_chunk()
 
-    print("Koniec pliku")
+    print("Zakończono parsowanie pliku")

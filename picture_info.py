@@ -71,15 +71,23 @@ class PictureInfo:
         chunk_len = self.read_chunk_nl() -2
         test = self.file.read(chunk_len)
 
-        while True:
-            test = int.from_bytes(self.file.read(1), "big")
-            if test != 0xff:
-                self.binary_image.append(test)
-            else:
-                if int.from_bytes(self.file.read(1), "big") == 0xd9:
-                    break
-
         print("Wykryto dane binarne zdjęcia")
+
+        data_bit = 1
+        while True:
+
+            data_bit = int.from_bytes(self.file.read(1), "big")
+
+            if data_bit == 0xff:
+                data_bit = int.from_bytes(self.file.read(1), "big")
+                if data_bit == 0xd9:
+                    break
+                else:
+                    self.binary_image.append(0xff)
+            
+            self.binary_image.append(data_bit)
+
+        print("Wykryto koniec pliku")
 
     ############################################################################################
 
