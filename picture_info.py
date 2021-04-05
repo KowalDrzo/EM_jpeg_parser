@@ -1,19 +1,25 @@
 
 class PictureInfo:
 
-    file = None
 
-    def __init__(self, file_name):
-        self.file = open(file_name, "rb")
+    ############################################################################################
+
+    def __init__(self):
+        pass
 
     def __del__(self):
-        self.file.close()
+        pass
 
-    def read_chunk_name(self) -> int:
-        chunk_name = self.file.read(2)
+    ############################################################################################
+
+    def read_chunk_name(self, file) -> int:
+        chunk_name = file.read(2)
+        print(chunk_name)
         return int.from_bytes(chunk_name, "big")
 
-    def check_soi(self):
+    ############################################################################################
+
+    def check_soi(self, file):
 
         int_byte = self.read_chunk_name()
 
@@ -21,3 +27,57 @@ class PictureInfo:
             
             print("Niepoprawny JPEG!")
             raise IOError
+
+    ############################################################################################
+
+    def read_adh(self, file):
+
+        chunk_len = int.from_bytes(file.read(2), "big")
+        file.read(chunk_len)
+
+        print("Wykryto chunk ADH")
+
+    ############################################################################################
+
+    def read_qt(self, file):
+
+        chunk_len = int.from_bytes(file.read(2), "big")
+        file.read(chunk_len)
+
+        print("Wykryto chunk QT")
+
+    ############################################################################################
+
+    def read_sof(self, file):
+
+        chunk_len = int.from_bytes(file.read(2), "big")
+        file.read(chunk_len)
+
+        print("Wykryto chunk SOF")
+
+    ############################################################################################
+
+    def read_dht(self, file):
+
+        chunk_len = int.from_bytes(file.read(2), "big")
+        file.read(chunk_len)
+
+        print("Wykryto chunk DHT")
+    
+    ############################################################################################
+
+    def read_image(self, file):
+
+        chunk_len = int.from_bytes(file.read(2), "big")
+        file.read(chunk_len)
+
+        print("Wykryto dane binarne zdjęcia")
+
+    ############################################################################################
+
+    def skipchunk(self, file):
+
+        chunk_len = int.from_bytes(file.read(2), "big")
+        file.read(chunk_len)
+
+        print("Wykryto jakiś inny chunk o długości " + str(chunk_len))
