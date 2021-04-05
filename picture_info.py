@@ -1,8 +1,10 @@
+import chunks.adh as adh
 
 class PictureInfo:
 
     file = None
     binary_image = []
+    adh_chunk = adh.ADH_chunk()
 
     ############################################################################################
 
@@ -32,44 +34,44 @@ class PictureInfo:
 
     def read_adh(self):
 
-        chunk_len = self.read_chunk_nl() -2
-        test = self.file.read(chunk_len)
+        chunk_len = self.read_chunk_nl()
+        test = self.file.read(chunk_len - 2)
 
-        print("Wykryto chunk ADH")
+        print("Wykryto chunk ADH długości " + str(chunk_len))
 
     ############################################################################################
 
     def read_qt(self):
 
-        chunk_len = self.read_chunk_nl() -2
-        test = self.file.read(chunk_len)
+        chunk_len = self.read_chunk_nl()
+        test = self.file.read(chunk_len - 2)
 
-        print("Wykryto chunk QT")
+        print("Wykryto chunk QT długości " + str(chunk_len))
 
     ############################################################################################
 
     def read_sof(self):
 
-        chunk_len = self.read_chunk_nl() -2
-        test = self.file.read(chunk_len)
+        chunk_len = self.read_chunk_nl()
+        test = self.file.read(chunk_len - 2)
 
-        print("Wykryto chunk SOF")
+        print("Wykryto chunk SOF długości " + str(chunk_len))
 
     ############################################################################################
 
     def read_dht(self):
 
-        chunk_len = self.read_chunk_nl() -2
-        test = self.file.read(chunk_len)
+        chunk_len = self.read_chunk_nl()
+        test = self.file.read(chunk_len - 2)
 
-        print("Wykryto chunk DHT")
+        print("Wykryto chunk DHT długości " + str(chunk_len))
     
     ############################################################################################
 
     def read_image(self):
 
-        chunk_len = self.read_chunk_nl() -2
-        test = self.file.read(chunk_len)
+        chunk_len = self.read_chunk_nl()
+        test = self.file.read(chunk_len - 2)
 
         print("Wykryto dane binarne zdjęcia")
 
@@ -93,7 +95,7 @@ class PictureInfo:
 
     def skip_chunk(self):
 
-        chunk_len = self.read_chunk_nl() -2
-        test = self.file.read(chunk_len)
+        chunk_len = self.read_chunk_nl()
+        test = self.file.read(chunk_len - 2)
 
         print("Wykryto jakiś inny chunk o długości " + str(chunk_len))

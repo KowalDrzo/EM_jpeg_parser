@@ -3,6 +3,7 @@ import fft1
 import show
 import parser
 import sys
+import picture_info as pinf
 
 """
 Funkcja print_menu do wyświetlania menu głównego programu.
@@ -28,6 +29,10 @@ print("\nProgram do parsowania plików JPEG")
 # Sprawdzanie poprawności otworzenia pliku
 file_name = show.check_file(sys.argv)
 
+pic_inf = pinf.PictureInfo(file_name)
+pic_inf.check_soi()
+parser.parse_jpg(pic_inf)
+
 # Obsługa menu
 while 1:
 
@@ -39,13 +44,13 @@ while 1:
         show.show_image(file_name)
 
     elif choice == "2":
-        parser.parse_jpg(file_name)
+        parser.more_info_jpg(pic_inf)
 
     elif choice == "3":
         fft1.fourier(file_name)
 
     elif choice == "4":
-        pass
+        parser.save_jpg(pic_inf)
 
     elif choice == "5":
         break

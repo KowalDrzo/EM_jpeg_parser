@@ -4,10 +4,7 @@ import picture_info as pinf
 Funkcja parse_jpg służy do parsowania pliku jpg celem wyciągnięcia informacji o obrazie
 """
 
-def parse_jpg(file_name):
-
-    pic_inf = pinf.PictureInfo(file_name)
-    pic_inf.check_soi()
+def parse_jpg(pic_inf):
 
     while True:
 
@@ -33,3 +30,23 @@ def parse_jpg(file_name):
             pic_inf.skip_chunk()
 
     print("Zakończono parsowanie pliku")
+
+############################################################################################
+
+def more_info_jpg(pic_inf):
+
+    pass
+
+############################################################################################
+
+def save_jpg(pic_inf):
+
+    name = input("Podaj nazwę nowego pliku: ")
+
+    new_file = open(name, "wb")
+
+    new_file.write(0xffd8.to_bytes(2, "big"))
+
+    new_file.write(0xffd9.to_bytes(2, "big"))
+
+    new_file.close()
