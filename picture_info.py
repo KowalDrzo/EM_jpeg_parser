@@ -2,6 +2,7 @@ import chunks.adh as adh
 
 class PictureInfo:
 
+    file_name = ""
     file = None
     binary_image = []
     adh_chunk = adh.ADH_chunk()
@@ -10,6 +11,7 @@ class PictureInfo:
     ############################################################################################
 
     def __init__(self, file_name):
+        self.file_name = file_name
         self.file = open(file_name, "rb")
 
     def __del__(self):
