@@ -1,6 +1,6 @@
 import fft1
 import show
-import parser
+import bf_parser
 import sys
 import picture_info as pinf
 from tkinter import *
