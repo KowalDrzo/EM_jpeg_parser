@@ -4,8 +4,10 @@ class PictureInfo:
 
     file_name = ""
     file = None
+
     binary_image = []
     adh_chunk = adh.ADH_chunk()
+    
     comment_chunk = []
 
     ############################################################################################
@@ -105,8 +107,6 @@ class PictureInfo:
         chunk_len = self.read_chunk_nl()
         comm = self.file.read(chunk_len - 2)
         self.comment_chunk.append(comm.decode("ascii"))
-
-        print(self.comment_chunk)
 
         print("Wykryto chunk komentarza długości " + str(chunk_len))
 
