@@ -42,6 +42,8 @@ def parse_jpg(pic_inf):
 
         elif chunk == 0xffda:
             pic_inf.read_image()
+
+        elif chunk == 0xffd9 or chunk == 0x00:
             break
 
         else:
@@ -53,6 +55,7 @@ def parse_jpg(pic_inf):
 
 def more_info_jpg(pic_inf):
 
+    print(pic_inf.binary_image)
     pass
 
 ############################################################################################
@@ -64,6 +67,9 @@ def save_jpg(pic_inf):
     new_file = open(name, "wb")
 
     new_file.write(0xffd8.to_bytes(2, "big"))
+
+    for byte in pic_inf.binary_image:
+        new_file.write(byte.to_bytes(1, "big"))
 
     new_file.write(0xffd9.to_bytes(2, "big"))
 

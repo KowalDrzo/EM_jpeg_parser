@@ -146,14 +146,12 @@ class PictureInfo:
 
             if data_bit == 0xff:
                 data_bit = int.from_bytes(self.file.read(1), "big")
-                if data_bit == 0xd9:
-                    break
-                else:
+                if data_bit == 0x00:
                     self.binary_image.append(0xff)
+                else:
+                    break
             
             self.binary_image.append(data_bit)
-
-        print("Wykryto koniec pliku")
 
     ############################################################################################
 

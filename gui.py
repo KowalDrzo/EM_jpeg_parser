@@ -39,13 +39,13 @@ class GuiMenu:
         show.show_image(self.pic_inf.file_name)
 
     def option2_callback(self):
-        parser.more_info_jpg(self.pic_inf)
+        bf_parser.more_info_jpg(self.pic_inf)
 
     def option3_callback(self):
         fft1.fourier(self.pic_inf.file_name)
 
     def option4_callback(self):
-        parser.save_jpg(self.pic_inf)
+        bf_parser.save_jpg(self.pic_inf)
 
     def option5_callback(self):
         exit()
