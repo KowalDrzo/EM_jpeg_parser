@@ -17,10 +17,12 @@ def fourier(file_name):
 
     # liczenie modułu
     magnitude_spectrum = 20 * np.log(np.abs(fshift))
+    magnitude_spectrum *= (255.0/magnitude_spectrum.max())
     magnitude_spectrum = np.asarray(magnitude_spectrum, dtype = np.uint8)
 
     # liczenie fazy
     phase_spectrum = np.angle(fshift)
+    phase_spectrum *= (255.0/phase_spectrum.max())
     phase_spectrum = np.asarray(phase_spectrum, dtype = np.uint8)
 
     # wyświetlanie
