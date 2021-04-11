@@ -67,11 +67,15 @@ def save_jpg(pic_inf):
 
     new_file = open(name, "wb")
 
+    new_file.write(bytes(pic_inf.binary_file)) # Tymczasowo
+
+    """
     new_file.write(0xffd8.to_bytes(2, "big"))
 
     for byte in pic_inf.binary_image:
         new_file.write(byte.to_bytes(1, "big"))
 
     new_file.write(0xffd9.to_bytes(2, "big"))
+    """
 
     new_file.close()

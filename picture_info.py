@@ -1,36 +1,38 @@
+from chunks.chunk import Chunk
 import chunks.adh as adh
+
 
 class PictureInfo:
 
     file_name = ""
-    file = None
+    binary_file = []
 
-    binary_image = []
-    adh_chunk = adh.ADH_chunk()
+    binary_image_scan = None
+    quanti_tables = []
+    sof = None
+
+    adh_chunk = None
     
-    comment_chunk = []
+    comments = []
 
     ############################################################################################
 
     def __init__(self, file_name):
         self.file_name = file_name
-        self.file = open(file_name, "rb")
-
-    def __del__(self):
-        self.file.close()
+        file = open(file_name, "rb")
+        self.binary_file = list(file.read())
+        file.close()
 
     ############################################################################################
 
-    def read_chunk_nl(self) -> int:
-        return int.from_bytes(self.file.read(2), "big")
+    #def read_chunk_nl(self) -> int:
+     #   return int.from_bytes(self.file.read(2), "big")
 
     ############################################################################################
 
     def check_soi(self):
 
-        int_byte = self.read_chunk_nl()
-
-        if int_byte != 0xffd8:
+        if self.binary_file[0] != 0xff or self.binary_file[1] != 0xd8:
             
             print("Niepoprawny JPEG!")
             raise IOError
@@ -38,7 +40,7 @@ class PictureInfo:
     ############################################################################################
     ############################################################################################
     ############################################################################################
-
+    """
     def read_adh(self):
 
         chunk_len = self.read_chunk_nl()
@@ -161,3 +163,6 @@ class PictureInfo:
         test = self.file.read(chunk_len - 2)
 
         print(str(name) + ": Wykryto jakiś inny chunk o długości " + str(chunk_len))
+
+    """
+        

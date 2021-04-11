@@ -1,4 +1,6 @@
+from chunk import Chunk
 
-class ADH_chunk:
+
+class ADH_chunk(Chunk):
 
     pass
