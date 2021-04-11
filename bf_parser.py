@@ -63,21 +63,28 @@ def more_info_jpg(pic_inf):
 
 ############################################################################################
 
-def save_jpg(pic_inf):
+def save_jpg(pic_inf, new_name):
 
-    name = input("Podaj nazwę nowego pliku: ")
+    new_file = open(new_name, "wb")
 
-    new_file = open(name, "wb")
+    # Początek pliku:
+    new_file.write(bytes([0xff, 0xd8]))
 
-    new_file.write(bytes(pic_inf.binary_file)) # Tymczasowo
+    if pic_inf.sof_chunk != None: # Dla plików JPEG ze zwykłym Start of Frame
 
-    """
-    new_file.write(0xffd8.to_bytes(2, "big"))
+        for qtable in pic_inf.quanti_tables: # Zapisywanie tabel kwantyzacji
+            new_file.write(bytes([0xff, 0xdb]))
+            new_file.write(bytes(pic_inf.binary_file[qtable.begin_ind:qtable.end_ind]))
 
-    for byte in pic_inf.binary_image:
-        new_file.write(byte.to_bytes(1, "big"))
+        # Zapisywanie sof:
+        new_file.write(bytes([0xff, 0xc0]))
+        new_file.write(bytes(pic_inf.binary_file[pic_inf.sof_chunk.begin_ind:pic_inf.sof_chunk.end_ind]))
 
-    new_file.write(0xffd9.to_bytes(2, "big"))
-    """
+        # Zapisywanie sos:
+        new_file.write(bytes([0xff, 0xda]))
+        new_file.write(bytes(pic_inf.binary_file[pic_inf.binary_image_scan.begin_ind:pic_inf.binary_image_scan.end_ind]))
+
+    # Koniec pliku:
+    new_file.write(bytes([0xff, 0xd9]))
 
     new_file.close()

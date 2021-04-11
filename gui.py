@@ -4,6 +4,7 @@ import bf_parser
 import sys
 import picture_info as pinf
 from tkinter import *
+import tkinter.filedialog as fd
 
 class GuiMenu:
 
@@ -45,7 +46,8 @@ class GuiMenu:
         fft1.fourier(self.pic_inf.file_name)
 
     def option4_callback(self):
-        bf_parser.save_jpg(self.pic_inf)
+        new_name = fd.asksaveasfilename()
+        bf_parser.save_jpg(self.pic_inf, new_name)
 
     def option5_callback(self):
         exit()
