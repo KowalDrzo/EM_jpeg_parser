@@ -1,19 +1,32 @@
 from chunks.jpeg_chunk import Chunk
 import chunks.adh as adh
+import chunks.sof as sof
+import chunks.exif as exif
+import chunks.sos as sos
 
+"""
+Klasa PictureInfo ...
+"""
 
 class PictureInfo:
 
+    # Nazwa i zawartość pliku:
     file_name = ""
     binary_file = []
 
+    # Obowiązkowe chunki:
     binary_image_scan = None
     quanti_tables = []
-    sof = None
+    sof_chunk = None
 
+    # Dodatkowe chunki:
     adh_chunk = None
-    
+    exif_chunks = []
+    huffmann_tables = []
     comments = []
+    sof2_chunk = None
+    app4 = None
+    icc = None
 
     ############################################################################################
 
@@ -33,9 +46,8 @@ class PictureInfo:
     def check_soi(self):
 
         start_not_detected = self.binary_file[0] != 0xff or self.binary_file[1] != 0xd8
-        end_not_detected = self.binary_file[-2] != 0xff or self.binary_file[-1] != 0xd9
 
-        if start_not_detected or end_not_detected:
+        if start_not_detected:
             
             print("Niepoprawny JPEG!")
             raise IOError
@@ -47,126 +59,112 @@ class PictureInfo:
     def read_adh(self, b_ind):
 
         length = self.chunk_len(b_ind)
-
         self.adh_chunk = adh.ADH_chunk(b_ind, b_ind + length)
 
         print("Wykryto chunk Application default header długości " + str(length))
 
     ############################################################################################
-    """
-    def read_qt(self):
+    
+    def read_qt(self, b_ind):
 
-        chunk_len = self.read_chunk_nl()
-        test = self.file.read(chunk_len - 2)
+        length = self.chunk_len(b_ind)
+        self.quanti_tables.append(Chunk(b_ind, b_ind + length))
 
-        print("Wykryto chunk z tabelą kwantyzacji długości " + str(chunk_len))
+        print("Wykryto chunk z tabelą kwantyzacji długości " + str(length))
+
+    ############################################################################################
+    
+    def read_sof(self, b_ind):
+
+        length = self.chunk_len(b_ind)
+        self.sof_chunk = sof.SOF_chunk(b_ind, b_ind + length)
+
+        print("Wykryto chunk Start of frame długości " + str(length))
 
     ############################################################################################
 
-    def read_sof(self):
+    def read_sof2(self, b_ind):
 
-        chunk_len = self.read_chunk_nl()
-        test = self.file.read(chunk_len - 2)
+        length = self.chunk_len(b_ind)
+        self.sof2_chunk = Chunk(b_ind, b_ind + length)
 
-        print("Wykryto chunk Start of frame długości " + str(chunk_len))
+        print("Wykryto chunk Start of frame 2 długości " + str(length))
+
+    ############################################################################################
+    
+    def read_dht(self, b_ind):
+
+        length = self.chunk_len(b_ind)
+        self.huffmann_tables.append(Chunk(b_ind, b_ind + length))
+
+        print("Wykryto chunk z tabelą Huffmanna długości " + str(length))
+    
+    ############################################################################################
+    
+    def read_exif(self, b_ind):
+
+        length = self.chunk_len(b_ind)
+        self.exif_chunks.append(exif.EXIF_chunk(b_ind, b_ind + length))
+
+        print("Wykryto chunk Exif długości " + str(length))
+
+    ############################################################################################
+    
+    def read_app4(self, b_ind):
+
+        length = self.chunk_len(b_ind)
+        self.app4 = Chunk(b_ind, b_ind + length)
+
+        print("Wykryto chunk APP4 długości " + str(length))
+    
+    ############################################################################################
+    
+    def read_reset(self, b_ind):
+
+        length = self.chunk_len(b_ind)
+        print("Wykryto chunk resetujący długości " + str(length))
+
+    ############################################################################################
+    
+    def read_comment(self, b_ind):
+
+        length = self.chunk_len(b_ind)
+        
+        comm = "".join([chr(c) for c in self.binary_file[b_ind:b_ind + length]])
+        self.comments.append(comm)
+
+        print("Wykryto chunk komentarza długości " + str(length))
 
     ############################################################################################
 
-    def read_dht(self):
+    def read_icc(self, b_ind):
 
-        chunk_len = self.read_chunk_nl()
-        test = self.file.read(chunk_len - 2)
+        length = self.chunk_len(b_ind)
+        self.icc = Chunk(b_ind, b_ind + length)
 
-        print("Wykryto chunk z tabelą Huffmann długości " + str(chunk_len))
+        print("Wykryto chunk ICC długości " + str(length))
+    
+    ############################################################################################
+    ############################################################################################
+    ############################################################################################
+
+    def read_image(self, b_ind):
+
+        e_ind = 0
+
+        for j in range(b_ind ,len(self.binary_file) -1):
+            
+            if self.binary_file[j] == 0xff:
+                if self.binary_file[j+1] != 0x00:
+                    e_ind = j
+
+        self.binary_image_scan = sos.SOS_chunk(b_ind, e_ind)
+
+        print("Wykryto chunk Start skanu oraz skompresowane dane zdjęcia")
     
     ############################################################################################
 
-    def read_exif(self):
+    def skip_chunk(self, number, b_ind):
 
-        chunk_len = self.read_chunk_nl()
-        test = self.file.read(chunk_len - 2)
-
-        print("Wykryto chunk Exif długości " + str(chunk_len))
-
-    ############################################################################################
-
-    def read_app4(self):
-
-        chunk_len = self.read_chunk_nl()
-        test = self.file.read(chunk_len - 2)
-
-        print("Wykryto chunk APP4 długości " + str(chunk_len))
-
-    ############################################################################################
-
-    def read_reset(self):
-
-        chunk_len = self.read_chunk_nl()
-        test = self.file.read(chunk_len - 2)
-
-        print("Wykryto chunk resetujący długości " + str(chunk_len))
-
-    ############################################################################################
-
-    def read_comment(self):
-
-        chunk_len = self.read_chunk_nl()
-        comm = self.file.read(chunk_len - 2)
-        self.comment_chunk.append(comm.decode("ascii"))
-
-        print("Wykryto chunk komentarza długości " + str(chunk_len))
-
-    ############################################################################################
-
-    def read_icc(self):
-
-        chunk_len = self.read_chunk_nl()
-        test = self.file.read(chunk_len - 2)
-
-        print("Wykryto chunk ICC długości " + str(chunk_len))
-
-    ############################################################################################
-
-    def read_sof2(self):
-
-        chunk_len = self.read_chunk_nl()
-        test = self.file.read(chunk_len - 2)
-
-        print("Wykryto chunk Start of frame 2 długości " + str(chunk_len))
-
-    ############################################################################################
-    ############################################################################################
-    ############################################################################################
-
-    def read_image(self):
-
-        chunk_len = self.read_chunk_nl()
-        test = self.file.read(chunk_len - 2)
-
-        print("Wykryto chunk Start skanu oraz skompresowane dane zdjęcia")
-
-        data_bit = 1
-        while True:
-
-            data_bit = int.from_bytes(self.file.read(1), "big")
-
-            if data_bit == 0xff:
-                data_bit = int.from_bytes(self.file.read(1), "big")
-                if data_bit == 0x00:
-                    self.binary_image.append(0xff)
-                else:
-                    break
-            
-            self.binary_image.append(data_bit)
-
-    ############################################################################################
-
-    def skip_chunk(self, name):
-
-        chunk_len = self.read_chunk_nl()
-        test = self.file.read(chunk_len - 2)
-
-        print(str(name) + ": Wykryto jakiś inny chunk o długości " + str(chunk_len))
-
-    """
-        
+        length = self.chunk_len(b_ind)
+        print(str(number) + ": Wykryto jakiś inny chunk o długości " + str(length))

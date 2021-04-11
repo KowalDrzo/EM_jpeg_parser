@@ -9,58 +9,49 @@ def parse_jpg(pic_inf):
     for i in range(2, len(pic_inf.binary_file) -1):
         if pic_inf.binary_file[i] == 0xff:
 
-            if pic_inf.binary_file[i+1] == 0x00:
+            next_byte = pic_inf.binary_file[i+1]
+            if next_byte == 0x00: # Brak nowego chunka
                 continue
 
-            elif pic_inf.binary_file[i+1] == 0xe0: # Chunk Application default header
+            elif next_byte == 0xe0: # Chunk Application default header
                 pic_inf.read_adh(i+2)
 
+            elif next_byte == 0xdb: # Chunk z tabelą kwantyzacji
+                pic_inf.read_qt(i+2)
 
-    """
-    chunk = 1
-    while True:
+            elif next_byte == 0xc0: # Chunk Start of frame
+                pic_inf.read_sof(i+2)
 
-        chunk = pic_inf.read_chunk_nl()
+            elif next_byte == 0xc2: # Chunk Start of frame 2
+                pic_inf.read_sof2(i+2)
 
-        if chunk == 0xffe0: # Chunk Application default header
-            pic_inf.read_adh()
+            elif next_byte == 0xc4: # Chunk z tabelą Huffmanna
+                pic_inf.read_dht(i+2)
 
-        elif chunk == 0xffdb: # Chunk z tabelą kwantyzacji
-            pic_inf.read_qt()
+            elif next_byte == 0xe1: # Chunk Exif
+                pic_inf.read_exif(i+2)
 
-        elif chunk == 0xffc0: # Chunk Start of frame
-            pic_inf.read_sof()
+            elif next_byte == 0xe4: # Chunk APP4
+                pic_inf.read_app4(i+2)
 
-        elif chunk == 0xffc2: # Chunk Start of frame 2
-            pic_inf.read_sof2()
+            elif next_byte == 0xdd: # Chunk resetu
+                pic_inf.read_reset(i+2)
 
-        elif chunk == 0xffc4: # Chunk z tabelą Huffmanna
-            pic_inf.read_dht()
-        
-        elif chunk == 0xffe1: # Chunk Exif
-            pic_inf.read_exif()
-        
-        elif chunk == 0xffe4:
-            pic_inf.read_app4() # Chunk APP4
+            elif next_byte == 0xfe: # Chunk z komentarzem
+                pic_inf.read_comment(i+2)
 
-        elif chunk == 0xffdd: # Chunk resetu
-            pic_inf.read_reset()
+            elif next_byte == 0xe2: # Chunk ICC
+                pic_inf.read_icc(i+2)
 
-        elif chunk == 0xfffe: # Chunk z komentarzem
-            pic_inf.read_comment()
-        
-        elif chunk == 0xffe2: # Chunk ICC
-            pic_inf.read_icc()
+            elif next_byte == 0xda: # Chunk Start of Scan i dane zdjęcia
+                pic_inf.read_image(i+2)
+            
+            elif next_byte == 0xd9: # Koniec JPEGa
+                break
 
-        elif chunk == 0xffda: # Chunk Start of Scan i dane zdjęcia
-            pic_inf.read_image()
-
-        elif chunk == 0xffd9 or chunk == 0: # Koniec pliku - marker końca lub fizyczny koniec pliku (w przypadku braku markera)
-            break
-
-        else:
-            pic_inf.skip_chunk(chunk)
-    """
+            else:   # Pomijanie nieznanego chunka
+                pic_inf.skip_chunk(pic_inf.binary_file[i+1], (i+2))
+                
 
     print("Zakończono parsowanie pliku")
 
@@ -68,7 +59,6 @@ def parse_jpg(pic_inf):
 
 def more_info_jpg(pic_inf):
 
-    print(pic_inf.binary_image)
     pass
 
 ############################################################################################
