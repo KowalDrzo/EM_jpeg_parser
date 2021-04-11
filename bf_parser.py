@@ -6,6 +6,17 @@ Funkcja parse_jpg służy do czytania kolejnych kodów nazw chunków i importowa
 
 def parse_jpg(pic_inf):
 
+    for i in range(2, len(pic_inf.binary_file) -1):
+        if pic_inf.binary_file[i] == 0xff:
+
+            if pic_inf.binary_file[i+1] == 0x00:
+                continue
+
+            elif pic_inf.binary_file[i+1] == 0xe0: # Chunk Application default header
+                pic_inf.read_adh(i+2)
+
+
+    """
     chunk = 1
     while True:
 
@@ -49,6 +60,7 @@ def parse_jpg(pic_inf):
 
         else:
             pic_inf.skip_chunk(chunk)
+    """
 
     print("Zakończono parsowanie pliku")
 

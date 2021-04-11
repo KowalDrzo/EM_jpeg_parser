@@ -1,4 +1,4 @@
-from chunks.chunk import Chunk
+from chunks.jpeg_chunk import Chunk
 import chunks.adh as adh
 
 
@@ -25,14 +25,17 @@ class PictureInfo:
 
     ############################################################################################
 
-    #def read_chunk_nl(self) -> int:
-     #   return int.from_bytes(self.file.read(2), "big")
+    def chunk_len(self, b_ind) -> int:
+        return (self.binary_file[b_ind] << 8) | self.binary_file[b_ind +1]
 
     ############################################################################################
 
     def check_soi(self):
 
-        if self.binary_file[0] != 0xff or self.binary_file[1] != 0xd8:
+        start_not_detected = self.binary_file[0] != 0xff or self.binary_file[1] != 0xd8
+        end_not_detected = self.binary_file[-2] != 0xff or self.binary_file[-1] != 0xd9
+
+        if start_not_detected or end_not_detected:
             
             print("Niepoprawny JPEG!")
             raise IOError
@@ -40,16 +43,17 @@ class PictureInfo:
     ############################################################################################
     ############################################################################################
     ############################################################################################
-    """
-    def read_adh(self):
+    
+    def read_adh(self, b_ind):
 
-        chunk_len = self.read_chunk_nl()
-        test = self.file.read(chunk_len - 2)
+        length = self.chunk_len(b_ind)
 
-        print("Wykryto chunk Application default header długości " + str(chunk_len))
+        self.adh_chunk = adh.ADH_chunk(b_ind, b_ind + length)
+
+        print("Wykryto chunk Application default header długości " + str(length))
 
     ############################################################################################
-
+    """
     def read_qt(self):
 
         chunk_len = self.read_chunk_nl()
