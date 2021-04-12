@@ -4,7 +4,7 @@ from chunks.jpeg_chunk import Chunk
 OPIS TODO!!!
 """
 
-class SOS_chunk(Chunk):
+class SOF2_chunk(Chunk):
 
 
 

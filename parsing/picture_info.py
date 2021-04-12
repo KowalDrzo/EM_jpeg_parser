@@ -1,8 +1,12 @@
 from chunks.jpeg_chunk import Chunk
 import chunks.adh as adh
-import chunks.sof as sof
+import chunks.app4 as app4
 import chunks.exif as exif
+import chunks.icc as icc
+import chunks.sof as sof
+import chunks.sof2 as sof2
 import chunks.sos as sos
+
 
 """
 Klasa PictureInfo OPIS TODO!!!
@@ -123,6 +127,9 @@ class PictureInfo:
 
         length = self.chunk_len(b_ind)
         self.exif_chunks.append(exif.EXIF_chunk(b_ind, b_ind + length))
+        
+        for exif_ch in self.exif_chunks:
+            exif_ch.get_info(self.binary_file[b_ind:b_ind + length])
 
         print("Wykryto chunk Exif długości " + str(length))
         return b_ind + length

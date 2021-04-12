@@ -1,6 +1,25 @@
 from chunks.jpeg_chunk import Chunk
 
+"""
+OPIS TODO!!!
+"""
+
 class EXIF_chunk(Chunk):
 
-    #def __init__(self, binary_table):
-    pass
+
+
+    """
+    OPIS TODO!!!
+    """
+
+    def get_info(self, binary_table):
+        pass
+
+    ############################################################################################
+
+    """
+    Opis TODO!!!
+    """
+
+    def print_info(self):
+        pass
