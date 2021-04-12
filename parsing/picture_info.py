@@ -18,13 +18,13 @@ class PictureInfo:
     binary_image_scan = []
     quanti_tables = []
     sof_chunk = None
+    sof2_chunk = None
 
     # Dodatkowe chunki:
     adh_chunk = None
     exif_chunks = []
     huffmann_tables = []
     comments = []
-    sof2_chunk = None
     app4_chunk = None
     icc_chunk = None
 
@@ -79,7 +79,7 @@ class PictureInfo:
     def read_sof(self, b_ind) -> int:
 
         length = self.chunk_len(b_ind)
-        self.sof_chunk = sof.SOF_chunk(b_ind, b_ind + length)
+        self.sof_chunk = sof.SOF_chunk(self.binary_file[b_ind:b_ind + length])
 
         print("Wykryto chunk Start of frame długości " + str(length))
         return b_ind + length

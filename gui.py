@@ -1,8 +1,11 @@
 import fft1
 import show
-import bf_parser
-import sys
-import picture_info as pinf
+import parsing.picture_info as pinf
+
+from parsing.bf_parser  import parse_jpg
+from parsing.file_saver import save_jpg
+from parsing.more_info  import more_info_jpg
+
 from tkinter import *
 import tkinter.filedialog as fd
 
@@ -40,14 +43,14 @@ class GuiMenu:
         show.show_image(self.pic_inf.file_name)
 
     def option2_callback(self):
-        bf_parser.more_info_jpg(self.pic_inf)
+        more_info_jpg(self.pic_inf)
 
     def option3_callback(self):
         fft1.fourier(self.pic_inf.file_name)
 
     def option4_callback(self):
         new_name = fd.asksaveasfilename()
-        bf_parser.save_jpg(self.pic_inf, new_name)
+        save_jpg(self.pic_inf, new_name)
 
     def option5_callback(self):
         exit()
