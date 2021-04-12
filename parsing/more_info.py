@@ -1,3 +1,6 @@
+"""
+OPIS TODO!!!
+"""
 
 def more_info_jpg(pic_inf):
 

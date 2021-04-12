@@ -9,12 +9,22 @@ from parsing.more_info  import more_info_jpg
 from tkinter import *
 import tkinter.filedialog as fd
 
+############################################################################################
+
+"""
+OPIS TODO!!!
+"""
+
 class GuiMenu:
 
     pic_inf = None
 
     def __init__(self, pic_inf):
         self.pic_inf = pic_inf
+
+    """
+    OPIS TODO!!!
+    """
 
     def display_menu(self):
         

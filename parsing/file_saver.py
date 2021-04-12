@@ -1,3 +1,6 @@
+"""
+OPIS TODO!!!
+"""
 
 def save_jpg(pic_inf, new_name):
 

@@ -5,7 +5,7 @@ import chunks.exif as exif
 import chunks.sos as sos
 
 """
-Klasa PictureInfo ...
+Klasa PictureInfo OPIS TODO!!!
 """
 
 class PictureInfo:
@@ -30,6 +30,10 @@ class PictureInfo:
 
     ############################################################################################
 
+    """
+    OPIS TODO!!!
+    """
+
     def __init__(self, file_name):
         self.file_name = file_name
         file = open(file_name, "rb")
@@ -38,10 +42,18 @@ class PictureInfo:
 
     ############################################################################################
 
+    """
+    OPIS TODO!!!
+    """
+
     def chunk_len(self, b_ind) -> int:
         return (self.binary_file[b_ind] << 8) | self.binary_file[b_ind +1]
 
     ############################################################################################
+
+    """
+    OPIS TODO!!!
+    """
 
     def check_soi(self):
 
@@ -158,6 +170,10 @@ class PictureInfo:
     ############################################################################################
     ############################################################################################
     
+    """
+    OPIS TODO!!!
+    """
+
     def read_image(self, b_ind) -> int:
 
         e_ind = 0
@@ -179,6 +195,10 @@ class PictureInfo:
         return e_ind
     
     ############################################################################################
+
+    """
+    OPIS TODO!!!
+    """
 
     def skip_chunk(self, number, b_ind) -> int:
 
