@@ -177,8 +177,9 @@ class PictureInfo:
 
         e_ind = 0
         res_counter = 0
+        header_length = self.chunk_len(b_ind)
 
-        for j in range(b_ind ,len(self.binary_file) -1):  
+        for j in range(b_ind+1 ,len(self.binary_file) -1):  
             if self.binary_file[j] == 0xff:
                 if self.binary_file[j+1] != 0x00:
                     
@@ -189,9 +190,7 @@ class PictureInfo:
                         break
 
         self.binary_image_scan.append(sos.SOS_chunk(b_ind, e_ind))
-
-        for scan in self.binary_image_scan:
-            scan.get_info(scan)
+        self.binary_image_scan[-1].get_info(self.binary_file[b_ind:b_ind + header_length])
 
         print("Wykryto chunk Start skanu oraz skompresowane dane zdjęcia")
         return e_ind

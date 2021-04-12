@@ -8,3 +8,6 @@ def more_info_jpg(pic_inf):
 
     if pic_inf.sof_chunk != None:
         pic_inf.sof_chunk.print_info()
+
+    for scan in  pic_inf.binary_image_scan:
+        scan.print_info()
