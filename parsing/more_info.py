@@ -11,3 +11,6 @@ def more_info_jpg(pic_inf):
 
     for scan in  pic_inf.binary_image_scan:
         scan.print_info()
+
+    for comment in pic_inf.comments:
+        print("\nKomentarz: " + comment + "\n")

@@ -39,3 +39,13 @@ class SOS_chunk(Chunk):
     def print_info(self):
         
         print("\nInformacje o chunku Start of Scan:\n")
+        
+        for i in range(0, self.components_nb):
+            
+            component = self.components[i]
+            print("Komponent nr " + str(i) + ":")
+            print("Selektor: " + str(component[0]))
+            print("Składowa zmienna: " + str(component[1] & 0x0f) + " Składowa stała: " + str(component[1] >> 4))
+        
+        print("Wybór spektralny: " + str(self.spectral))
+        print("Przybliżenie kwantyzacji: " + str(self.approx))
