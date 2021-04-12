@@ -1,8 +1,10 @@
+from chunks.jpeg_chunk import Chunk
+
 """
 Klasa SOF_chunk OPIS TODO!!!
 """
 
-class SOF_chunk:
+class SOF_chunk(Chunk):
 
     precision = 0
     height = 0
@@ -15,7 +17,7 @@ class SOF_chunk:
     Opis TODO!!!
     """
 
-    def __init__(self, binary_table):
+    def get_info(self, binary_table):
 
         self.precision = binary_table[2]
         self.height = (binary_table[3] << 8) | binary_table[4]

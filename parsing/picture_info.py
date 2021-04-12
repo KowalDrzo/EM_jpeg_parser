@@ -91,7 +91,8 @@ class PictureInfo:
     def read_sof(self, b_ind) -> int:
 
         length = self.chunk_len(b_ind)
-        self.sof_chunk = sof.SOF_chunk(self.binary_file[b_ind:b_ind + length])
+        self.sof_chunk = sof.SOF_chunk(b_ind, b_ind + length)
+        self.sof_chunk.get_info(self.binary_file[b_ind:b_ind + length])
 
         print("Wykryto chunk Start of frame długości " + str(length))
         return b_ind + length
