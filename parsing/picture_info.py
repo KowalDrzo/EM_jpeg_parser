@@ -4,7 +4,6 @@ import chunks.app4 as app4
 import chunks.exif as exif
 import chunks.icc as icc
 import chunks.sof as sof
-import chunks.sof2 as sof2
 import chunks.sos as sos
 
 
@@ -22,7 +21,6 @@ class PictureInfo:
     binary_image_scan = []
     quanti_tables = []
     sof_chunk = None
-    sof2_chunk = None
 
     # Dodatkowe chunki:
     adh_chunk = None
@@ -76,6 +74,7 @@ class PictureInfo:
 
         length = self.chunk_len(b_ind)
         self.adh_chunk = adh.ADH_chunk(b_ind, b_ind + length)
+        self.adh_chunk.get_info(self.binary_file[b_ind:b_ind + length])
 
         print("Wykryto chunk Application default header długości " + str(length))
         return b_ind + length
@@ -92,23 +91,13 @@ class PictureInfo:
 
     ############################################################################################
     
-    def read_sof(self, b_ind) -> int:
+    def read_sof(self, b_ind, number) -> int:
 
         length = self.chunk_len(b_ind)
         self.sof_chunk = sof.SOF_chunk(b_ind, b_ind + length)
-        self.sof_chunk.get_info(self.binary_file[b_ind:b_ind + length])
+        self.sof_chunk.get_info(self.binary_file[b_ind:b_ind + length], number)
 
-        print("Wykryto chunk Start of frame długości " + str(length))
-        return b_ind + length
-
-    ############################################################################################
-
-    def read_sof2(self, b_ind) -> int:
-
-        length = self.chunk_len(b_ind)
-        self.sof2_chunk = Chunk(b_ind, b_ind + length)
-
-        print("Wykryto chunk Start of frame 2 długości " + str(length))
+        print("Wykryto chunk Start of frame (typ " + str(self.sof_chunk.sof_nb) + ") długości " + str(length))
         return b_ind + length
 
     ############################################################################################
@@ -139,7 +128,8 @@ class PictureInfo:
     def read_app4(self, b_ind) -> int:
 
         length = self.chunk_len(b_ind)
-        self.app4_chunk = Chunk(b_ind, b_ind + length)
+        self.app4_chunk = app4.APP4_chunk(b_ind, b_ind + length)
+        self.app4_chunk.get_info(self.binary_file[b_ind:b_ind + length])
 
         print("Wykryto chunk APP4 długości " + str(length))
         return b_ind + length
@@ -169,7 +159,8 @@ class PictureInfo:
     def read_icc(self, b_ind) -> int:
 
         length = self.chunk_len(b_ind)
-        self.icc = Chunk(b_ind, b_ind + length)
+        self.icc = icc.ICC_chunk(b_ind, b_ind + length)
+        self.icc.get_info(self.binary_file[b_ind:b_ind + length])
 
         print("Wykryto chunk ICC długości " + str(length))
         return b_ind + length
@@ -198,6 +189,9 @@ class PictureInfo:
                         break
 
         self.binary_image_scan.append(sos.SOS_chunk(b_ind, e_ind))
+
+        for scan in self.binary_image_scan:
+            scan.get_info(scan)
 
         print("Wykryto chunk Start skanu oraz skompresowane dane zdjęcia")
         return e_ind

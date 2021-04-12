@@ -6,6 +6,8 @@ Klasa SOF_chunk OPIS TODO!!!
 
 class SOF_chunk(Chunk):
 
+    sof_nb = 0
+
     precision = 0
     height = 0
     width = 0
@@ -17,7 +19,9 @@ class SOF_chunk(Chunk):
     Opis TODO!!!
     """
 
-    def get_info(self, binary_table):
+    def get_info(self, binary_table, number):
+
+        self.sof_nb = number
 
         self.precision = binary_table[2]
         self.height = (binary_table[3] << 8) | binary_table[4]
@@ -39,7 +43,7 @@ class SOF_chunk(Chunk):
 
     def print_info(self):
 
-        print("\nInformacje o chunku Start of Frame:\n")
+        print("\nInformacje o chunku Start of Frame (typ " + str(self.sof_nb) + "):\n")
         print("Głębia bitowa: "     + str(self.precision)   + " bit")
         print("Wysokość obrazu: "   + str(self.height)      + " pix")
         print("szerokość obrazu: "  + str(self.width)       + " pix")

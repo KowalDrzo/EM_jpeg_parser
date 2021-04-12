@@ -21,11 +21,9 @@ def parse_jpg(pic_inf):
             elif next_byte == 0xdb: # Chunk z tabelą kwantyzacji
                 i = pic_inf.read_qt(i+2)
 
-            elif next_byte == 0xc0: # Chunk Start of frame
-                i = pic_inf.read_sof(i+2)
-
-            elif next_byte == 0xc2: # Chunk Start of frame 2
-                i = pic_inf.read_sof2(i+2)
+            # Chunk Start of frame:
+            elif next_byte >= 0xc0 and next_byte <= 0xcf and next_byte != 0xc4 and next_byte != 0xc8 and next_byte != 0xcc:
+                i = pic_inf.read_sof(i+2, next_byte & 0x0f)
 
             elif next_byte == 0xc4: # Chunk z tabelą Huffmanna
                 i = pic_inf.read_dht(i+2)
