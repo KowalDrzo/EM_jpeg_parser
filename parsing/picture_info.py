@@ -137,7 +137,10 @@ class PictureInfo:
     def read_reset(self, b_ind) -> int:
 
         length = self.chunk_len(b_ind)
-        print("Wykryto chunk resetujący długości " + str(length))
+
+        self.necessary_chunks.append(Chunk(b_ind, b_ind + length, 0xdd))
+
+        print("Wykryto chunk interwału resetów długości " + str(length))
         return b_ind + length
 
     ############################################################################################
