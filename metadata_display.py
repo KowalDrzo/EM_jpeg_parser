@@ -2,7 +2,7 @@ import os
 from PIL import Image
 from PIL.ExifTags import TAGS
 
-img_file = "benek2.jpg"
+img_file = "Obraz/benek1.jpg"
 img = Image.open(img_file)
 
 exif_data = img.getexif()
