@@ -23,7 +23,7 @@ def parse_jpg(pic_inf):
 
             # Chunk Start of frame:
             elif next_byte >= 0xc0 and next_byte <= 0xcf and next_byte != 0xc4 and next_byte != 0xc8 and next_byte != 0xcc:
-                i = pic_inf.read_sof(i+2, next_byte & 0x0f)
+                i = pic_inf.read_sof(i+2, next_byte)
 
             elif next_byte == 0xc4: # Chunk z tabelą Huffmanna
                 i = pic_inf.read_dht(i+2)

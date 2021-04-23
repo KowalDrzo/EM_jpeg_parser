@@ -18,9 +18,7 @@ class PictureInfo:
     binary_file = []
 
     # Obowiązkowe chunki:
-    binary_image_scan = []
-    quanti_tables = []
-    sof_chunk = None
+    necessary_chunks = []
 
     # Dodatkowe chunki:
     adh_chunk = None
@@ -84,20 +82,21 @@ class PictureInfo:
     def read_qt(self, b_ind) -> int:
 
         length = self.chunk_len(b_ind)
-        self.quanti_tables.append(Chunk(b_ind, b_ind + length))
+        self.necessary_chunks.append(Chunk(b_ind, b_ind + length, 0xdb))
 
         print("Wykryto chunk z tabelą kwantyzacji długości " + str(length))
         return b_ind + length
 
     ############################################################################################
     
-    def read_sof(self, b_ind, number) -> int:
+    def read_sof(self, b_ind, marker) -> int:
 
         length = self.chunk_len(b_ind)
-        self.sof_chunk = sof.SOF_chunk(b_ind, b_ind + length)
-        self.sof_chunk.get_info(self.binary_file[b_ind:b_ind + length], number)
 
-        print("Wykryto chunk Start of frame (typ " + str(self.sof_chunk.sof_nb) + ") długości " + str(length))
+        self.necessary_chunks.append(sof.SOF_chunk(b_ind, b_ind + length, marker))
+        self.necessary_chunks[-1].get_info(self.binary_file[b_ind:b_ind + length], marker & 0x0f)
+
+        print("Wykryto chunk Start of frame (typ " + str(marker & 0x0f) + ") długości " + str(length))
         return b_ind + length
 
     ############################################################################################
@@ -105,7 +104,7 @@ class PictureInfo:
     def read_dht(self, b_ind) -> int:
 
         length = self.chunk_len(b_ind)
-        self.huffmann_tables.append(Chunk(b_ind, b_ind + length))
+        self.necessary_chunks.append(Chunk(b_ind, b_ind + length, 0xc4))
 
         print("Wykryto chunk z tabelą Huffmanna długości " + str(length))
         return b_ind + length
@@ -189,8 +188,8 @@ class PictureInfo:
                         e_ind = j
                         break
 
-        self.binary_image_scan.append(sos.SOS_chunk(b_ind, e_ind))
-        self.binary_image_scan[-1].get_info(self.binary_file[b_ind:b_ind + header_length])
+        self.necessary_chunks.append(sos.SOS_chunk(b_ind, e_ind, 0xda))
+        self.necessary_chunks[-1].get_info(self.binary_file[b_ind:b_ind + header_length])
 
         print("Wykryto chunk Start skanu oraz skompresowane dane zdjęcia")
         return e_ind

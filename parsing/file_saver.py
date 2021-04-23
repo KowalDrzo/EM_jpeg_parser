@@ -9,6 +9,11 @@ def save_jpg(pic_inf, new_name):
     # Początek pliku:
     new_file.write(bytes([0xff, 0xd8]))
 
+    for nec_chunk in pic_inf.necessary_chunks:
+        new_file.write(bytes([0xff, nec_chunk.marker]))
+        new_file.write(bytes(pic_inf.binary_file[nec_chunk.begin_ind:nec_chunk.end_ind]))
+
+    """
     for qtable in pic_inf.quanti_tables: # Zapisywanie tabel kwantyzacji
         new_file.write(bytes([0xff, 0xdb]))
         new_file.write(bytes(pic_inf.binary_file[qtable.begin_ind:qtable.end_ind]))
@@ -34,7 +39,7 @@ def save_jpg(pic_inf, new_name):
             
             new_file.write(bytes([0xff, 0xda]))
             new_file.write(bytes(pic_inf.binary_file[pic_inf.binary_image_scan[i].begin_ind:pic_inf.binary_image_scan[i].end_ind]))
-
+    """
 
     # Koniec pliku:
     new_file.write(bytes([0xff, 0xd9]))
