@@ -1,5 +1,6 @@
 import cv2
 import tkinter.filedialog as fd
+import tkinter
 
 """
 Funkcja show_image służy do wyświetlenia obrazu.
@@ -35,5 +36,8 @@ def check_file(args: list) -> str:
         ("JPEG", '*.jpeg'),
         ("Wszystkie pliki", "*"), 
     ]
+
+    root = tkinter.Tk()
+    root.withdraw()
 
     return fd.askopenfilename(filetypes = ftypes)
