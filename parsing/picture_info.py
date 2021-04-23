@@ -21,12 +21,11 @@ class PictureInfo:
     necessary_chunks = []
 
     # Dodatkowe chunki:
-    adh_chunk = None
-    exif_chunks = []
-    huffmann_tables = []
-    comments = []
-    app4_chunk = None
-    icc_chunk = None
+    adh_chunk   = None
+    exif_chunk  = None
+    app4_chunk  = None
+    icc_chunk   = None
+    comments    = []
 
     ############################################################################################
 
@@ -114,10 +113,9 @@ class PictureInfo:
     def read_exif(self, b_ind) -> int:
 
         length = self.chunk_len(b_ind)
-        self.exif_chunks.append(exif.EXIF_chunk(b_ind, b_ind + length))
-        
-        for exif_ch in self.exif_chunks:
-            exif_ch.get_info(self.binary_file[b_ind:b_ind + length])
+
+        self.exif_chunk = exif.EXIF_chunk(b_ind, b_ind + length)
+        self.exif_chunk.get_info(self.binary_file[b_ind:b_ind + length])
 
         print("Wykryto chunk Exif długości " + str(length))
         return b_ind + length
@@ -127,6 +125,7 @@ class PictureInfo:
     def read_app4(self, b_ind) -> int:
 
         length = self.chunk_len(b_ind)
+
         self.app4_chunk = app4.APP4_chunk(b_ind, b_ind + length)
         self.app4_chunk.get_info(self.binary_file[b_ind:b_ind + length])
 
@@ -158,6 +157,7 @@ class PictureInfo:
     def read_icc(self, b_ind) -> int:
 
         length = self.chunk_len(b_ind)
+        
         self.icc = icc.ICC_chunk(b_ind, b_ind + length)
         self.icc.get_info(self.binary_file[b_ind:b_ind + length])
 
