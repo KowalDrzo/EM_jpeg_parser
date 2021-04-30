@@ -1,5 +1,10 @@
 """
-OPIS TODO!!!
+Funkcja służąca do zapisu nowego pliku, przy użyciu tylko i wyłącznie niezbędnych chunków.
+Funkcja buduje nowy plik zapisując kolejno chunki.
+
+param:
+pic_inf - struktura informacji o obrazie,
+new_name - nazwa nowego pliku.
 """
 
 def save_jpg(pic_inf, new_name):

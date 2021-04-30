@@ -67,6 +67,7 @@ class PictureInfo:
     ############################################################################################
     ############################################################################################
     
+    # Chunk opcjonalny:
     def read_adh(self, b_ind) -> int:
 
         length = self.chunk_len(b_ind)
@@ -78,6 +79,7 @@ class PictureInfo:
 
     ############################################################################################
     
+    # Chunk obowiązkowy:
     def read_qt(self, b_ind) -> int:
 
         length = self.chunk_len(b_ind)
@@ -88,6 +90,7 @@ class PictureInfo:
 
     ############################################################################################
     
+    # Chunk obowiązkowy:
     def read_sof(self, b_ind, marker) -> int:
 
         length = self.chunk_len(b_ind)
@@ -100,6 +103,7 @@ class PictureInfo:
 
     ############################################################################################
     
+    # Chunk zwykle obowiązkowy (choć bywają wyjątki):
     def read_dht(self, b_ind) -> int:
 
         length = self.chunk_len(b_ind)
@@ -110,6 +114,7 @@ class PictureInfo:
     
     ############################################################################################
     
+    # Chunk opcjonalny:
     def read_exif(self, b_ind) -> int:
 
         length = self.chunk_len(b_ind)
@@ -122,6 +127,7 @@ class PictureInfo:
 
     ############################################################################################
     
+    # Chunk opcjonalny - stosunkowo rzadki i specjalistyczny. Ten program nie zagłębia się w jego parsowanie:
     def read_app4(self, b_ind) -> int:
 
         length = self.chunk_len(b_ind)
@@ -134,6 +140,7 @@ class PictureInfo:
     
     ############################################################################################
     
+    # Chunk obowiązkowy:
     def read_reset(self, b_ind) -> int:
 
         length = self.chunk_len(b_ind)
@@ -145,6 +152,7 @@ class PictureInfo:
 
     ############################################################################################
     
+    # Chunk opcjonalny:
     def read_comment(self, b_ind) -> int:
 
         length = self.chunk_len(b_ind)
@@ -157,6 +165,7 @@ class PictureInfo:
 
     ############################################################################################
 
+    # Chunk opcjonalny - stosunkowo rzadki i specjalistyczny. Ten program nie zagłębia się w jego parsowanie:
     def read_icc(self, b_ind) -> int:
 
         length = self.chunk_len(b_ind)
@@ -200,7 +209,14 @@ class PictureInfo:
     ############################################################################################
 
     """
-    OPIS TODO!!!
+    Funkcja pomijająca nieznany chunk i wypisująca jego rozmiar.
+
+    Param:
+    number - numer definiujący typ nieznanego chunka,
+    b_ind - indeks początku chunka (pierwszy indeks rozmiaru).
+
+    Returns:
+    int - indeks pierwszego elementu za tym chunkiem.
     """
 
     def skip_chunk(self, number, b_ind) -> int:
