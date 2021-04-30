@@ -15,5 +15,8 @@ def more_info_jpg(pic_inf):
     for comment in pic_inf.comments:
         print("\nKomentarz: " + comment + "\n")
 
-    if pic_inf.adh_chunk != None:
-        pic_inf.adh_chunk.print_info()
+    for met_chunk in pic_inf.metadata_chunks:
+        try:
+            met_chunk.print_info()
+        except:
+            pass

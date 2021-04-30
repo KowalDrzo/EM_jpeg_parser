@@ -1,8 +1,6 @@
 from chunks.jpeg_chunk import Chunk
 import chunks.adh as adh
-import chunks.app4 as app4
 import chunks.exif as exif
-import chunks.icc as icc
 import chunks.sof as sof
 import chunks.sos as sos
 
@@ -21,10 +19,7 @@ class PictureInfo:
     necessary_chunks = []
 
     # Dodatkowe chunki:
-    adh_chunk   = None
-    exif_chunk  = None
-    app4_chunk  = None
-    icc_chunk   = None
+    metadata_chunks = []
     comments    = []
 
     ############################################################################################
@@ -71,8 +66,8 @@ class PictureInfo:
     def read_adh(self, b_ind) -> int:
 
         length = self.chunk_len(b_ind)
-        self.adh_chunk = adh.ADH_chunk(b_ind, b_ind + length)
-        self.adh_chunk.get_info(self.binary_file[b_ind:b_ind + length])
+        self.metadata_chunks.append(adh.ADH_chunk(b_ind, b_ind + length))
+        self.metadata_chunks[-1].get_info(self.binary_file[b_ind:b_ind + length])
 
         print("Wykryto chunk Application default header długości " + str(length))
         return b_ind + length
@@ -119,8 +114,8 @@ class PictureInfo:
 
         length = self.chunk_len(b_ind)
 
-        self.exif_chunk = exif.EXIF_chunk(b_ind, b_ind + length)
-        self.exif_chunk.get_info(self.binary_file[b_ind:b_ind + length])
+        self.metadata_chunks.append(exif.EXIF_chunk(b_ind, b_ind + length))
+        self.metadata_chunks[-1].get_info(self.binary_file[b_ind:b_ind + length])
 
         print("Wykryto chunk Exif długości " + str(length))
         return b_ind + length
@@ -132,8 +127,7 @@ class PictureInfo:
 
         length = self.chunk_len(b_ind)
 
-        self.app4_chunk = app4.APP4_chunk(b_ind, b_ind + length)
-        self.app4_chunk.get_info(self.binary_file[b_ind:b_ind + length])
+        self.metadata_chunks.append(Chunk(b_ind, b_ind + length))
 
         print("Wykryto chunk APP4 długości " + str(length))
         return b_ind + length
@@ -170,8 +164,7 @@ class PictureInfo:
 
         length = self.chunk_len(b_ind)
         
-        self.icc = icc.ICC_chunk(b_ind, b_ind + length)
-        self.icc.get_info(self.binary_file[b_ind:b_ind + length])
+        self.metadata_chunks.append(Chunk(b_ind, b_ind + length))
 
         print("Wykryto chunk ICC długości " + str(length))
         return b_ind + length
