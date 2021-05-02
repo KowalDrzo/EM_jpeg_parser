@@ -9,7 +9,7 @@ class SOS_chunk(Chunk):
     components_nb = 0
     components = []
 
-    spectral = []
+    spectral = [int] * 2
     approx = 0
 
     """
@@ -26,8 +26,8 @@ class SOS_chunk(Chunk):
             dc_ac = binary_table[4+i*2]
             self.components.append([selector, dc_ac])
 
-        self.spectral.append(binary_table[self.components_nb * 2 + 3])
-        self.spectral.append(binary_table[self.components_nb * 2 + 4])
+        self.spectral[0] = binary_table[self.components_nb * 2 + 3]
+        self.spectral[1] = binary_table[self.components_nb * 2 + 4]
         self.approx = binary_table[self.components_nb * 2 + 5]
 
     ############################################################################################

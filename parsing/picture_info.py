@@ -115,7 +115,7 @@ class PictureInfo:
         length = self.chunk_len(b_ind)
 
         self.metadata_chunks.append(exif.EXIF_chunk(b_ind, b_ind + length))
-        self.metadata_chunks[-1].get_info(self.binary_file[b_ind:b_ind + length])
+        self.metadata_chunks[-1].parse_exif(self.binary_file[b_ind:b_ind + length])
 
         print("Wykryto chunk Exif długości " + str(length))
         return b_ind + length
