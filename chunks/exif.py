@@ -7,8 +7,8 @@ OPIS TODO!!!
 class EXIF_chunk(Chunk):
 
     identifier = ""
-    low_endian = False
-    
+    jpegThumbnail = False
+
     ifd_offset = []
     ifd_components_nb = []
 
@@ -35,6 +35,16 @@ class EXIF_chunk(Chunk):
             raise ValueError        
 
         self.read_offset_ifd(binary_table, 12)
+
+        i = 16
+        while i < len(binary_table):
+            
+            if binary_table[i] == 0xff and binary_table[i+1] == 0xd8:
+                self.jpegThumbnail = True
+                break
+
+            i += 1
+
 
     ############################################################################################
 
