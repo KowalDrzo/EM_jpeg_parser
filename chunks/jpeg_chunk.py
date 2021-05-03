@@ -9,7 +9,7 @@ class Chunk:
     end_ind = 0     # Indeks będący już poza chunkiem (tak aby range(begin_ind, end_ind) nie wzięło go pod uwagę),
     marker = 0      # Marker zaczynający chunk (opcjonalne).
 
-    def __init__(self, b, e, mark = -1):
+    def __init__(self, b = -1, e = -1, mark = -1):
         self.begin_ind = b
         self.end_ind = e
         self.marker = mark

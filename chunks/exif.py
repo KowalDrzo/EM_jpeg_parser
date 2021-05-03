@@ -1,4 +1,5 @@
 from chunks.jpeg_chunk import Chunk
+from chunks.sof import SOF_chunk
 
 """
 OPIS TODO!!!
@@ -7,10 +8,15 @@ OPIS TODO!!!
 class EXIF_chunk(Chunk):
 
     identifier = ""
-    jpegThumbnail = False
+    
+    jpeg_thumbnail = False
+    thumbnail_sof = None
 
     ifd_offset = []
     ifd_components_nb = []
+
+
+    descriptions = []
 
     ############################################################################################
 
@@ -36,14 +42,29 @@ class EXIF_chunk(Chunk):
 
         self.read_offset_ifd(binary_table, 12)
 
+        # Poszukiwania miniatury:
         i = 16
         while i < len(binary_table):
             
-            if binary_table[i] == 0xff and binary_table[i+1] == 0xd8:
-                self.jpegThumbnail = True
-                break
+            if binary_table[i] == 0xff:
+
+                next_byte = binary_table[i+1]
+
+                if next_byte == 0xd8:
+                    self.jpeg_thumbnail = True
+            
+                elif next_byte >= 0xc0 and next_byte <= 0xcf and next_byte != 0xc4 and next_byte != 0xc8 and next_byte != 0xcc:
+                    
+                    sof_len = (binary_table[i+2] << 8) | binary_table[i+3]
+
+                    self.thumbnail_sof = SOF_chunk()
+                    self.thumbnail_sof.get_info(binary_table[i+2:i+2 + sof_len], next_byte & 0x0f)
+                    break
 
             i += 1
+
+            # Szukanie dodatkowych markerów:
+
 
 
     ############################################################################################
@@ -60,10 +81,8 @@ class EXIF_chunk(Chunk):
             binary_subtable.reverse()
 
         for byte in binary_subtable:
-            result |= byte
             result << 8
-
-        result >> 8
+            result |= byte
 
         return result
 
@@ -101,3 +120,12 @@ class EXIF_chunk(Chunk):
             print("Element nr " + str(i) + ":")
             print("offset: " + str(self.ifd_offset[i]))
             print("ilość wpisów: " + str(self.ifd_components_nb[i]))
+
+        if self.jpeg_thumbnail:
+            
+            print("Exif zawienia miniaturę w formacie Jpeg")
+            print("Dane miniatury:")
+            self.thumbnail_sof.print_info()
+
+        else:
+            print("Exif nie zawiera miniatury")
