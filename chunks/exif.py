@@ -92,6 +92,7 @@ class EXIF_chunk(Chunk):
 
                 elif next_byte == 0x32:
                     self.original_date = self.ascii_read(binary_table[i+2:i+22])
+                    print(self.original_date)
 
             elif binary_table[i] == 0x82:
 
@@ -115,7 +116,6 @@ class EXIF_chunk(Chunk):
 
                 elif next_byte == 0x03:
                     self.resX = self.link_bytes(binary_table[i+2:i+6])
-
 
             i += 1
 
@@ -188,6 +188,12 @@ class EXIF_chunk(Chunk):
         
         print("\nInformacje o chunku Exif:\n")
         print("Identyfikator: " + self.identifier)
+
+        if self.low_endian:
+            print("Tryb łączenia bajtów: Low endian")
+        else:
+            print("Tryb łączenia bajtów: Big endian")
+
         print("Ilość elementów ifd: " + str(len(self.ifd_components_nb)))
 
         for i in range(0, len(self.ifd_components_nb)):
