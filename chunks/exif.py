@@ -20,6 +20,13 @@ class EXIF_chunk(Chunk):
     camera_soft = ""
 
     original_date = ""
+    copyrights = ""
+
+    exposure_time = 0.0
+    exposure_program = 0
+
+    resX = 0
+    resY = 0
 
     ############################################################################################
 
@@ -85,6 +92,30 @@ class EXIF_chunk(Chunk):
 
                 elif next_byte == 0x32:
                     self.original_date = self.ascii_read(binary_table[i+2:i+22])
+
+            elif binary_table[i] == 0x82:
+
+                next_byte = binary_table[i+1]
+
+                if next_byte == 0x98:
+                    self.copyrights = self.ascii_read(binary_table[i+2:])
+
+                elif next_byte == 0x9a:
+                    self.exposure_time = self.link_bytes(binary_table[i+2:i+6]) / self.link_bytes(binary_table[i+6:i+10])
+
+            elif binary_table[i] == 0x88 and binary_table[i+1] == 0x22 and self.exposure_program == 0:
+                self.exposure_program = self.link_bytes(binary_table[i+2:i+4])
+
+            elif binary_table[i] == 0xa0:
+
+                next_byte = binary_table[i+1]
+
+                if next_byte == 0x02:
+                    self.resY = self.link_bytes(binary_table[i+2:i+6])
+
+                elif next_byte == 0x03:
+                    self.resX = self.link_bytes(binary_table[i+2:i+6])
+
 
             i += 1
 
@@ -169,6 +200,7 @@ class EXIF_chunk(Chunk):
             print("Exif zawienia miniaturę w formacie Jpeg")
             print("Dane miniatury:")
             self.thumbnail_sof.print_info()
+            print("")
 
         else:
             print("Exif nie zawiera miniatury")
@@ -184,3 +216,37 @@ class EXIF_chunk(Chunk):
 
         if self.original_date:
             print("Oryginalna data obrazu: " + self.original_date)
+
+        if self.copyrights:
+            print("Prawa autorskie: " + self.copyrights)
+
+        if self.exposure_time != 0.0:
+            print("Czas ekspozycji: " + str(self.exposure_time))
+
+        if self.exposure_program > 0:
+            result = ""
+
+            if self.exposure_program == 1:
+                result = "manualny"
+            elif self.exposure_program == 2:
+                result = "normalny"
+            elif self.exposure_program == 3:
+                result = "priorytet przysłony"
+            elif self.exposure_program == 4:
+                result = "priorytet migawki"
+            elif self.exposure_program == 5:
+                result = "długi czas naświetlania"
+            elif self.exposure_program == 6:
+                result = "krótki czas naświetlania"
+            elif self.exposure_program == 7:
+                result = "portret"
+            elif self.exposure_program == 8:
+                result = "krajobraz"
+            else:
+                result = "inny"
+
+
+            print("Program ekspozycji: " + result)
+
+        if self.resY != 0 and self.resX != 0:
+            print("Rozdzielczość: " + str(self.resY) + ":" + str(self.resX))
