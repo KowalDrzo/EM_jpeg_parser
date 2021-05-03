@@ -75,15 +75,12 @@ class EXIF_chunk(Chunk):
                 next_byte = binary_table[i+1]
                 
                 if next_byte == 0x0f:
-                    print("tutaj jest")
                     self.camera_manufacturer = self.ascii_read(binary_table[i+2:])
 
                 elif next_byte == 0x10:
-                    print("tutaj jest")
                     self.camera_model = self.ascii_read(binary_table[i+2:])
 
                 elif next_byte == 0x31:
-                    print("tutaj jest")
                     self.camera_soft = self.ascii_read(binary_table[i+2:])
 
                 elif next_byte == 0x32:
@@ -123,15 +120,13 @@ class EXIF_chunk(Chunk):
     def ascii_read(self, binary_subtable: list) -> str:
 
         result = ""
-        a = ""
 
         for char in binary_subtable:
+            
             result += chr(char)
-            a+=str(char) + " "
             if char == 0:
                 break
 
-        print(a)
         return result
 
     ############################################################################################
