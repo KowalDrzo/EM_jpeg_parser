@@ -15,8 +15,11 @@ class EXIF_chunk(Chunk):
     ifd_offset = []
     ifd_components_nb = []
 
+    camera_manufacturer = ""
+    camera_model = ""
+    camera_soft = ""
 
-    descriptions = []
+    original_date = ""
 
     ############################################################################################
 
@@ -63,7 +66,32 @@ class EXIF_chunk(Chunk):
 
             i += 1
 
-            # Szukanie dodatkowych markerów:
+        # Szukanie innych markerów:
+        i = 16
+        while i < len(binary_table):
+
+            if binary_table[i] == 0x01:
+
+                next_byte = binary_table[i+1]
+                
+                if next_byte == 0x0f:
+                    print("tutaj jest")
+                    self.camera_manufacturer = self.ascii_read(binary_table[i+2:])
+
+                elif next_byte == 0x10:
+                    print("tutaj jest")
+                    self.camera_model = self.ascii_read(binary_table[i+2:])
+
+                elif next_byte == 0x31:
+                    print("tutaj jest")
+                    self.camera_soft = self.ascii_read(binary_table[i+2:])
+
+                elif next_byte == 0x32:
+                    self.original_date = self.ascii_read(binary_table[i+2:i+22])
+
+            i += 1
+
+        
 
 
 
@@ -84,6 +112,26 @@ class EXIF_chunk(Chunk):
             result << 8
             result |= byte
 
+        return result
+
+    ############################################################################################
+
+    """
+    Opis TODO!!!
+    """
+
+    def ascii_read(self, binary_subtable: list) -> str:
+
+        result = ""
+        a = ""
+
+        for char in binary_subtable:
+            result += chr(char)
+            a+=str(char) + " "
+            if char == 0:
+                break
+
+        print(a)
         return result
 
     ############################################################################################
@@ -129,3 +177,15 @@ class EXIF_chunk(Chunk):
 
         else:
             print("Exif nie zawiera miniatury")
+
+        if self.camera_manufacturer:
+            print("Producent aparatu: " + self.camera_manufacturer)
+
+        if self.camera_model:
+            print("Model aparatu:" + self.camera_model)
+
+        if self.camera_soft:
+            print("Oprogramowanie aparatu:" + self.camera_soft)
+
+        if self.original_date:
+            print("Oryginalna data obrazu: " + self.original_date)
