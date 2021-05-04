@@ -7,7 +7,7 @@ import chunks.sos as sos
 is_huffmann_necessary = True
 
 """
-Klasa PictureInfo OPIS TODO!!!
+Klasa PictureInfo zajmuje się przechowywaniem rozparsowanych chunków.
 """
 
 class PictureInfo:
@@ -26,7 +26,7 @@ class PictureInfo:
     ############################################################################################
 
     """
-    OPIS TODO!!!
+    Konstruktor wczytujący plik o podanej nazwie i zapisujący go (cały plik) do listy.
     """
 
     def __init__(self, file_name):
@@ -38,7 +38,7 @@ class PictureInfo:
     ############################################################################################
 
     """
-    OPIS TODO!!!
+    Prosta funkcja zwracająca długość chunka zaczynającą się w indeksie b_ind.
     """
 
     def chunk_len(self, b_ind) -> int:
@@ -47,7 +47,7 @@ class PictureInfo:
     ############################################################################################
 
     """
-    OPIS TODO!!!
+    Funkcja sprawdzająca, czy plik na pewno zawiera marker startu JPEGa.
     """
 
     def check_soi(self):
@@ -179,7 +179,8 @@ class PictureInfo:
     ############################################################################################
     
     """
-    OPIS TODO!!!
+    Funkcja wczytująca chunk SOS - jego nagłówek oraz występujące po nim dane samego zdjęcia.
+    Zwraca indeks, w którym skończyły się te dane - tak aby można było szukać dalej jakiegoś chunka.
     """
 
     def read_image(self, b_ind) -> int:
