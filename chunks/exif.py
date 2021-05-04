@@ -126,7 +126,7 @@ class EXIF_chunk(Chunk):
     ############################################################################################
 
     """
-    Opis TODO!!!
+    Metoda zajmująca się łączeniem kilku podanych bajtów w jedną liczbę z zachowaniem trybu Low lub Big endian.
     """
 
     def link_bytes(self, binary_subtable: list) -> int:
@@ -145,7 +145,7 @@ class EXIF_chunk(Chunk):
     ############################################################################################
 
     """
-    Opis TODO!!!
+    Metoda czytająca napis ascii aż do napotkania wartości 0.
     """
 
     def ascii_read(self, binary_subtable: list) -> str:
