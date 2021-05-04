@@ -171,7 +171,7 @@ class PictureInfo:
         
         self.metadata_chunks.append(Chunk(b_ind, b_ind + length))
 
-        print("Wykryto chunk ICC długości " + str(length))
+        print("Wykryto chunk z paletą kolorów długości " + str(length))
         return b_ind + length
     
     ############################################################################################
@@ -202,7 +202,7 @@ class PictureInfo:
         self.necessary_chunks.append(sos.SOS_chunk(b_ind, e_ind, 0xda))
         self.necessary_chunks[-1].get_info(self.binary_file[b_ind:b_ind + header_length])
 
-        print("Wykryto chunk Start skanu oraz skompresowane dane zdjęcia")
+        print("Wykryto chunk Start skanu oraz skompresowane dane zdjęcia długości " + str(e_ind-b_ind))
         return e_ind
     
     ############################################################################################
