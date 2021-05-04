@@ -1,7 +1,7 @@
 from chunks.jpeg_chunk import Chunk
 
 """
-Klasa SOF_chunk OPIS TODO!!!
+Klasa zajmująca się parsowaniem i przechowywaniem elementów odczytanych z chunku SOF.
 """
 
 class SOF_chunk(Chunk):
@@ -16,7 +16,7 @@ class SOF_chunk(Chunk):
     components = []
 
     """
-    Opis TODO!!!
+    Metoda parsująca chunk i zapisująca dane wyczytane z niego.
     """
 
     def get_info(self, binary_table, number):
@@ -38,7 +38,7 @@ class SOF_chunk(Chunk):
     ############################################################################################
 
     """
-    Opis TODO!!!
+    Metoda wyświetlająca odczytane wcześniej dane.
     """
 
     def print_info(self):

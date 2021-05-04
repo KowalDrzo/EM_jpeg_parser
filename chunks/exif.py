@@ -2,7 +2,7 @@ from chunks.jpeg_chunk import Chunk
 from chunks.sof import SOF_chunk
 
 """
-OPIS TODO!!!
+Klasa zajmująca się parsowaniem i przechowywaniem elementów odczytanych z chunku Exif.
 """
 
 class EXIF_chunk(Chunk):
@@ -31,7 +31,7 @@ class EXIF_chunk(Chunk):
     ############################################################################################
 
     """
-    OPIS TODO!!!
+    Metoda parsująca chunk i zapisująca dane wyczytane z niego.
     """
 
     def parse_exif(self, binary_table: list):
@@ -181,7 +181,7 @@ class EXIF_chunk(Chunk):
     ############################################################################################
 
     """
-    Opis TODO!!!
+    Metoda wyświetlająca odczytane wcześniej dane.
     """
 
     def print_info(self):

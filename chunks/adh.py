@@ -1,7 +1,7 @@
 from chunks.jpeg_chunk import Chunk
 
 """
-OPIS TODO!!!
+Klasa zajmująca się parsowaniem i przechowywaniem elementów odczytanych z chunku ADH.
 """
 
 class ADH_chunk(Chunk):
@@ -13,7 +13,7 @@ class ADH_chunk(Chunk):
     thumbnail = []
 
     """
-    OPIS TODO!!!
+    Metoda parsująca chunk i zapisująca dane wyczytane z niego.
     """
 
     def get_info(self, binary_table):
@@ -35,7 +35,7 @@ class ADH_chunk(Chunk):
     ############################################################################################
 
     """
-    Opis TODO!!!
+    Metoda wyświetlająca odczytane wcześniej dane.
     """
 
     def print_info(self):
