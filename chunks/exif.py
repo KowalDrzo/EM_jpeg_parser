@@ -8,25 +8,13 @@ Klasa zajmująca się parsowaniem i przechowywaniem elementów odczytanych z chu
 class EXIF_chunk(Chunk):
 
     identifier = ""
+    low_endian = False
     
     jpeg_thumbnail = False
     thumbnail_sof = None
 
     ifd_offset = []
     ifd_components_nb = []
-
-    camera_manufacturer = ""
-    camera_model = ""
-    camera_soft = ""
-
-    original_date = ""
-    copyrights = ""
-
-    exposure_time = 0.0
-    exposure_program = 0
-
-    resX = 0
-    resY = 0
 
     ############################################################################################
 
@@ -71,56 +59,7 @@ class EXIF_chunk(Chunk):
                     self.thumbnail_sof.get_info(binary_table[i+2:i+2 + sof_len], next_byte & 0x0f)
                     break
 
-            i += 1
-
-        # Szukanie innych markerów:
-        i = 16
-        while i < len(binary_table):
-
-            if binary_table[i] == 0x01:
-
-                next_byte = binary_table[i+1]
-                
-                if next_byte == 0x0f:
-                    self.camera_manufacturer = self.ascii_read(binary_table[i+2:])
-
-                elif next_byte == 0x10:
-                    self.camera_model = self.ascii_read(binary_table[i+2:])
-
-                elif next_byte == 0x31:
-                    self.camera_soft = self.ascii_read(binary_table[i+2:])
-
-                elif next_byte == 0x32:
-                    self.original_date = self.ascii_read(binary_table[i+2:i+22])
-                    print(self.original_date)
-
-            elif binary_table[i] == 0x82:
-
-                next_byte = binary_table[i+1]
-
-                if next_byte == 0x98:
-                    self.copyrights = self.ascii_read(binary_table[i+2:])
-
-                elif next_byte == 0x9a:
-                    self.exposure_time = self.link_bytes(binary_table[i+2:i+6]) / self.link_bytes(binary_table[i+6:i+10])
-
-            elif binary_table[i] == 0x88 and binary_table[i+1] == 0x22 and self.exposure_program == 0:
-                self.exposure_program = self.link_bytes(binary_table[i+2:i+4])
-
-            elif binary_table[i] == 0xa0:
-
-                next_byte = binary_table[i+1]
-
-                if next_byte == 0x02:
-                    self.resY = self.link_bytes(binary_table[i+2:i+6])
-
-                elif next_byte == 0x03:
-                    self.resX = self.link_bytes(binary_table[i+2:i+6])
-
-            i += 1
-
-        
-
+            i += 1     
 
 
     ############################################################################################
@@ -145,24 +84,6 @@ class EXIF_chunk(Chunk):
     ############################################################################################
 
     """
-    Metoda czytająca napis ascii aż do napotkania wartości 0.
-    """
-
-    def ascii_read(self, binary_subtable: list) -> str:
-
-        result = ""
-
-        for char in binary_subtable:
-            
-            result += chr(char)
-            if char == 0:
-                break
-
-        return result
-
-    ############################################################################################
-
-    """
     Rekurencyjna metoda szukająca Image File Directories - offsetów informacji o zdjęciu / miniaturze itp.
     """
 
@@ -173,7 +94,12 @@ class EXIF_chunk(Chunk):
         
         link_offset = self.ifd_offset[-1]+12*self.ifd_components_nb[-1]
 
+        # Link nigdzie nie prowadzi:
         if binary_table[8+link_offset:8+link_offset+4] == [0, 0, 0, 0]:
+            return
+
+        # Link wskazuje na samego siebie:
+        if link_offset == beg:
             return
 
         self.read_offset_ifd(binary_table, link_offset)
@@ -210,49 +136,3 @@ class EXIF_chunk(Chunk):
 
         else:
             print("Exif nie zawiera miniatury")
-
-        if self.camera_manufacturer:
-            print("Producent aparatu: " + self.camera_manufacturer)
-
-        if self.camera_model:
-            print("Model aparatu:" + self.camera_model)
-
-        if self.camera_soft:
-            print("Oprogramowanie aparatu:" + self.camera_soft)
-
-        if self.original_date:
-            print("Oryginalna data obrazu: " + self.original_date)
-
-        if self.copyrights:
-            print("Prawa autorskie: " + self.copyrights)
-
-        if self.exposure_time != 0.0:
-            print("Czas ekspozycji: " + str(self.exposure_time))
-
-        if self.exposure_program > 0:
-            result = ""
-
-            if self.exposure_program == 1:
-                result = "manualny"
-            elif self.exposure_program == 2:
-                result = "normalny"
-            elif self.exposure_program == 3:
-                result = "priorytet przysłony"
-            elif self.exposure_program == 4:
-                result = "priorytet migawki"
-            elif self.exposure_program == 5:
-                result = "długi czas naświetlania"
-            elif self.exposure_program == 6:
-                result = "krótki czas naświetlania"
-            elif self.exposure_program == 7:
-                result = "portret"
-            elif self.exposure_program == 8:
-                result = "krajobraz"
-            else:
-                result = "inny"
-
-
-            print("Program ekspozycji: " + result)
-
-        if self.resY != 0 and self.resX != 0:
-            print("Rozdzielczość: " + str(self.resY) + ":" + str(self.resX))
