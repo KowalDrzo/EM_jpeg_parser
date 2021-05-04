@@ -4,6 +4,7 @@ import chunks.exif as exif
 import chunks.sof as sof
 import chunks.sos as sos
 
+is_huffmann_necessary = True
 
 """
 Klasa PictureInfo OPIS TODO!!!
@@ -102,7 +103,11 @@ class PictureInfo:
     def read_dht(self, b_ind) -> int:
 
         length = self.chunk_len(b_ind)
-        self.necessary_chunks.append(Chunk(b_ind, b_ind + length, 0xc4))
+        
+        if is_huffmann_necessary:
+            self.necessary_chunks.append(Chunk(b_ind, b_ind + length, 0xc4))
+        else:
+            self.metadata_chunks.append(Chunk(b_ind, b_ind + length, 0xc4))
 
         print("Wykryto chunk z tabelą Huffmanna długości " + str(length))
         return b_ind + length
