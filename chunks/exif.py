@@ -163,7 +163,7 @@ class EXIF_chunk(Chunk):
     ############################################################################################
 
     """
-    Opis TODO!!!
+    Rekurencyjna metoda szukająca Image File Directories - offsetów informacji o zdjęciu / miniaturze itp.
     """
 
     def read_offset_ifd(self, binary_table: list, beg) -> int:
