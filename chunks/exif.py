@@ -74,6 +74,7 @@ class EXIF_chunk(Chunk):
 
         if self.low_endian:
             binary_subtable.reverse()
+            print("dzień dobry")
 
         for byte in binary_subtable:
             result << 8
