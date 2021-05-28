@@ -1,4 +1,5 @@
 import random
+import sympy
 
 def rabinMiller(n, private_key):
     a = random.randint(2, (n - 2) - 2)
@@ -81,10 +82,8 @@ def generateLargePrime(keysize):
         return random large prime number of keysize bits in size
     """
 
-    while True:
-        num = random.randrange(2 ** (keysize - 1), 2 ** keysize - 1)
-        if (isPrime(num)):
-            return num
+    return sympy.randprime(2 ** (keysize - 1), 2 ** keysize - 1)
+
 
 def isCoPrime(p, q):
     """
@@ -148,13 +147,14 @@ def decrypt(private_key, N, cipher):
 def main():
     print("RSA, działa!") #komunikat testowy, do wywalenia
 
-    keysize = 32
+    keysize = 128
 
     public_key, private_key, N = generateKeys(keysize)
 
     msg = "RSA, działa!" #komunikat testowy, do wywalenia
 
     enc = encrypt(public_key, N, msg)
+
     dec = decrypt(private_key, N, enc)
 
     print(f"Message: {msg}")
