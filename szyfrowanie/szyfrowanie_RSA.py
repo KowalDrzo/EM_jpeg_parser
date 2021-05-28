@@ -141,16 +141,23 @@ def encrypt(public_key, N, bin_file):
 
     return new_file
 
-def decrypt(private_key, N, cipher):
-    msg = ""
+def divide_chunks(l, n):
+      
+    # looping till length l
+    for i in range(0, len(l), n): 
+        yield l[i:i + n]
 
-    parts = cipher.split()
-    for part in parts:
-        if part:
-            c = int(part)
-            msg += chr(pow(c, private_key, N))
+def decrypt(private_key, N, bin_file):
+    
+    original_file = []
+    parts_8_bytes = divide_chunks(bin_file, 8)
 
-    return msg
+    #parts = cipher.split()
+    for part in parts_8_bytes:
+        c = int.from_bytes(part, byteorder="big")
+        original_file.append(pow(c, private_key, N))
+
+    return original_file
 
 
 keysize = 16
@@ -175,6 +182,16 @@ for byte in enc:
     file.write(byte)
 file.close()
 
-print("gotowe")
+print("Odszyfrowywuję")
 
-# dec = decrypt(private_key, N, bin_file)
+file = open("SFR.jpg", "rb")
+bin_file = list(file.read())
+file.close()
+
+dec = decrypt(private_key, N, bin_file)
+
+print("Zapisuję odszyfrowany")
+
+file = open("SFR2.jpg", "wb")
+file.write(bytes(dec))
+file.close()
