@@ -22,7 +22,9 @@ def rabinMiller(n, private_key):
 
 def isPrime(n): #zwraca True jeśli liczba jest pierwsza, test Rabina-Millera jeśli jest niepewna
     
+    return sympy.isprime(n)
 
+    """
     # 0, 1, -ve numbers not prime
     if n < 2:
         return False
@@ -50,6 +52,7 @@ def isPrime(n): #zwraca True jeśli liczba jest pierwsza, test Rabina-Millera je
             return False
 
     return True
+    """
 
 def generateKeys(keysize=1024):
     public_key = private_key = N = 0
@@ -145,9 +148,8 @@ def decrypt(private_key, N, cipher):
     return msg
 
 def main():
-    print("RSA, działa!") #komunikat testowy, do wywalenia
 
-    keysize = 128
+    keysize = 64
 
     public_key, private_key, N = generateKeys(keysize)
 
