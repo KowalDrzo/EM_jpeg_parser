@@ -1,5 +1,7 @@
 import random
+from typing import Type
 import sympy
+from sympy.printing.codeprinter import print_fcode
 
 def rabinMiller(n, private_key):
     a = random.randint(2, (n - 2) - 2)
@@ -127,14 +129,17 @@ def modular_inverse(a, b): #generuje
 
     return x
 
-def encrypt(public_key, N, msg):
-    cipher = ""
+def encrypt(public_key, N, bin_file):
+    
+    new_file = []
+    new_val = 0
 
-    for c in msg:
-        m = ord(c)
-        cipher += str(pow(m, public_key, N)) + " "
+    for byte in bin_file:
 
-    return cipher
+        new_val = pow(byte, public_key, N)
+        new_file.append(new_val.to_bytes(8, "big"))
+
+    return new_file
 
 def decrypt(private_key, N, cipher):
     msg = ""
@@ -147,24 +152,29 @@ def decrypt(private_key, N, cipher):
 
     return msg
 
-def main():
 
-    keysize = 64
+keysize = 16
 
-    public_key, private_key, N = generateKeys(keysize)
+public_key, private_key, N = generateKeys(keysize)
 
-    msg = "RSA, działa!" #komunikat testowy, do wywalenia
+print("Wczytuję")
 
-    enc = encrypt(public_key, N, msg)
+file = open("../Obraz/Patyczak.jpg", "rb")
+bin_file = list(file.read())
+file.close()
 
-    dec = decrypt(private_key, N, enc)
+print("Szyfruję")
 
-    print(f"Message: {msg}")
-    print(f"public_key: {public_key}")
-    print(f"private_key: {private_key}")
-    print(f"N: {N}")
-    print(f"enc: {enc}")
-    print(f"dec: {dec}")
+enc = encrypt(public_key, N, bin_file)
 
-main()
+print("Zapisuję")
 
+file = open("SFR.jpg", "wb")
+
+for byte in enc:
+    file.write(byte)
+file.close()
+
+print("gotowe")
+
+# dec = decrypt(private_key, N, bin_file)
