@@ -1,5 +1,5 @@
 import random
-from typing import Type
+from typing import List, Type
 import sympy
 from sympy.printing.codeprinter import print_fcode
 
@@ -129,17 +129,20 @@ def modular_inverse(a, b): #generuje
 
     return x
 
-def encrypt(public_key, N, bin_file):
+def encrypt(public_key, N, bin_file) -> List[bytes]:
     
     new_file = []
+    new_parts = []
     new_val = 0
+    parts_8_bytes = divide_chunks(bin_file, 8)
 
-    for byte in bin_file:
+    for part in parts_8_bytes:
 
-        new_val = pow(byte, public_key, N)
-        new_file.append(new_val.to_bytes(8, "big"))
+        c = int.from_bytes(part, byteorder="big")
+        new_val = pow(c, public_key, N)
+        new_parts += new_val.to_bytes(8, "big")
 
-    return new_file
+    return new_parts
 
 def divide_chunks(l, n):
       
@@ -147,15 +150,16 @@ def divide_chunks(l, n):
     for i in range(0, len(l), n): 
         yield l[i:i + n]
 
-def decrypt(private_key, N, bin_file):
+def decrypt(private_key, N, bin_file) -> List[bytes]:
     
     original_file = []
     parts_8_bytes = divide_chunks(bin_file, 8)
+    new_val = 0
 
-    #parts = cipher.split()
     for part in parts_8_bytes:
         c = int.from_bytes(part, byteorder="big")
-        original_file.append(pow(c, private_key, N))
+        new_val = pow(c, private_key, N)
+        original_file += new_val.to_bytes(8, "big")
 
     return original_file
 
@@ -177,9 +181,7 @@ enc = encrypt(public_key, N, bin_file)
 print("Zapisuję")
 
 file = open("SFR.jpg", "wb")
-
-for byte in enc:
-    file.write(byte)
+file.write(bytes(enc))
 file.close()
 
 print("Odszyfrowywuję")
