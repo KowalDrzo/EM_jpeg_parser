@@ -133,9 +133,9 @@ def encrypt(public_key, N, bin_file) -> List[bytes]:
     
     new_parts = []
     new_val = 0
-    parts_8_bytes = divide_chunks(bin_file, 256)
+    parts_8_bytes = list(divide_chunks(bin_file, 256))
 
-    print(str(256 - (len(bin_file) % 256)))
+    print(str(len(bin_file) % 256))
 
     for part in parts_8_bytes:
 
@@ -163,7 +163,7 @@ def decrypt(private_key, N, bin_file) -> List[bytes]:
         c = int.from_bytes(part, byteorder="big")
         new_val = pow(c, private_key, N)
         if part is parts_8_bytes[-1]:
-            original_file += new_val.to_bytes(137-18, "big")
+            original_file += new_val.to_bytes(139, "big")
             print("ostatni")
         else:
             original_file += new_val.to_bytes(256, "big")
@@ -177,7 +177,7 @@ public_key, private_key, N = generateKeys(keysize)
 
 print("Wczytuję")
 
-file = open("Patyczak.jpg", "rb")
+file = open("testowy.jpg", "rb")
 bin_file = list(file.read())
 file.close()
 
