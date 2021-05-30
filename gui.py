@@ -1,3 +1,4 @@
+from numpy.core.arrayprint import set_string_function
 import fft1
 import show
 import parsing.picture_info as pinf
@@ -24,6 +25,7 @@ class GuiMenu:
     main_window = Tk()
     key_entry = Entry(main_window)
     N_entry = Entry(main_window)
+    check_tabs = BooleanVar()
 
     def __init__(self, pic_inf, encryptor):
         self.pic_inf = pic_inf
@@ -48,6 +50,8 @@ class GuiMenu:
         option7 = Button(self.main_window, width = b_width, text ="Odszyfruj obraz",                         command = self.option7_callback)
         option_exit = Button(self.main_window, width = b_width, text ="Wyjdź",                               command = self.option_exit_callback)
         
+        tabs_box = Checkbutton(self.main_window,  text="Szyfrowanie także tabel kwantyzacji i huffmanna",     variable = self.check_tabs)
+
         option1.pack()
         option2.pack()
         option3.pack()
@@ -55,6 +59,8 @@ class GuiMenu:
         option5.pack()
         option6.pack()
         option7.pack()
+
+        tabs_box.pack()
         self.key_entry.pack()
         self.N_entry.pack()
         option_exit.pack()
@@ -77,15 +83,17 @@ class GuiMenu:
         save_jpg(self.pic_inf, new_name)
 
     def option5_callback(self):
-        self.encryptor_rsa.showGeneratedKeys()
+        N_entry_text = self.encryptor_rsa.showGeneratedKeys()
+        self.N_entry.delete(0, END)
+        self.N_entry.insert(0, N_entry_text)
 
     def option6_callback(self):
         new_name = fd.asksaveasfilename()
-        self.encryptor_rsa.save_encrypted(self.pic_inf, new_name, int(self.key_entry.get()), int(self.N_entry.get()), False)
+        self.encryptor_rsa.save_encrypted(self.pic_inf, new_name, int(self.key_entry.get()), int(self.N_entry.get()), False, self.check_tabs.get())
 
     def option7_callback(self):
         new_name = fd.asksaveasfilename()
-        self.encryptor_rsa.save_encrypted(self.pic_inf, new_name, int(self.key_entry.get()), int(self.N_entry.get()), True)
+        self.encryptor_rsa.save_encrypted(self.pic_inf, new_name, int(self.key_entry.get()), int(self.N_entry.get()), True, self.check_tabs.get())
 
     def option_exit_callback(self):
         exit()

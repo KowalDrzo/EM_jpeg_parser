@@ -174,10 +174,10 @@ class Encryptor:
     ################################################################
     ################################################################
 
-    def showGeneratedKeys(self):
+    def showGeneratedKeys(self) -> str:
         
         self.public_key, self.private_key, self.N = self.generateKeys()
-        
+
         print("\nNowy klucz publiczny:")
         print(self.public_key)
         print("\nNowy klucz prywatny:")
@@ -185,9 +185,11 @@ class Encryptor:
         print("\nNowy modulator:")
         print(self.N)
 
+        return str(self.N)
+
     ################################################################
 
-    def save_encrypted(self, pic_inf, new_name, key: int, N: int, decryption: bool):
+    def save_encrypted(self, pic_inf, new_name, key: int, N: int, decryption: bool, encrypt_tabs: bool):
         
         new_file = open(new_name, "wb")
 
@@ -209,6 +211,13 @@ class Encryptor:
                 enc = self.encrypt(key, N, pic_inf.binary_file[nec_chunk.begin_ind + nec_chunk.header_len:nec_chunk.end_ind])
                 sof_edited = ChunkEditor.edit_for_sof(enc, decryption)
                 new_file.write(bytes(sof_edited))
+
+            elif encrypt_tabs and (nec_chunk.marker == 0xdb or nec_chunk.marker == 0xc4):
+
+                    enc = self.encrypt(key, N, pic_inf.binary_file[nec_chunk.begin_ind+2:nec_chunk.end_ind])
+                    new_len = ChunkEditor.edit_for_tabs(enc)
+                    new_file.write(bytes(new_len))
+                    new_file.write(bytes(enc))
             
             else: 
                 new_file.write(bytes(pic_inf.binary_file[nec_chunk.begin_ind:nec_chunk.end_ind]))
