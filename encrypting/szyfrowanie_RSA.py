@@ -170,6 +170,8 @@ class Encryptor:
         return original_file
 
     ################################################################
+    ################################################################
+    ################################################################
 
     def showGeneratedKeys(self):
         
@@ -181,6 +183,17 @@ class Encryptor:
         print(self.private_key)
         print("\nNowy modulator:")
         print(self.N)
+
+    ################################################################
+
+    def save_encrypted(self, pic_inf, newfile_name):
+        i = 5
+        i += 1
+
+    ################################################################
+
+    def save_decrypted(self, pic_inf):
+        pass
 
 """
 keysize = 16
