@@ -186,9 +186,33 @@ class Encryptor:
 
     ################################################################
 
-    def save_encrypted(self, pic_inf, newfile_name):
-        i = 5
-        i += 1
+    def save_encrypted(self, pic_inf, new_name):
+        
+        new_file = open(new_name, "wb")
+
+        # Początek pliku:
+        new_file.write(bytes([0xff, 0xd8]))
+
+        # Zapis niezmienionyh metadanych:
+        for meta_chunk in pic_inf.metadata_chunks:
+            new_file.write(bytes([0xff, meta_chunk.marker]))
+            new_file.write(bytes(pic_inf.binary_file[meta_chunk.begin_ind:meta_chunk.end_ind]))
+
+        # Zapis zmienionych danych właściwych:
+        for nec_chunk in pic_inf.necessary_chunks:
+            
+            new_file.write(bytes([0xff, nec_chunk.marker]))
+            if nec_chunk.marker == 0xda:
+                new_file.write(bytes(pic_inf.binary_file[nec_chunk.begin_ind:nec_chunk.begin_ind + nec_chunk.header_len]))
+                enc = self.encrypt(self.public_key, self.N, pic_inf.binary_file[nec_chunk.begin_ind + nec_chunk.header_len:nec_chunk.end_ind])
+                new_file.write(bytes(enc))
+            else: 
+                new_file.write(bytes(pic_inf.binary_file[nec_chunk.begin_ind:nec_chunk.end_ind]))
+
+        # Koniec pliku:
+        new_file.write(bytes([0xff, 0xd9]))
+
+        new_file.close()
 
     ################################################################
 

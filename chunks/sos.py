@@ -8,6 +8,7 @@ class SOS_chunk(Chunk):
 
     components_nb = 0
     components = []
+    header_len = 0
 
     spectral = [int] * 2
     approx = 0
@@ -19,6 +20,7 @@ class SOS_chunk(Chunk):
     def get_info(self, binary_table):
         
         self.components_nb = binary_table[2]
+        self.header_len = len(binary_table)
 
         for i in range(0, self.components_nb):
             

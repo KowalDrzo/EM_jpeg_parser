@@ -75,12 +75,12 @@ class GuiMenu:
         self.encryptor_rsa.showGeneratedKeys()
 
     def option6_callback(self):
-        newfile_name = fd.asksaveasfilename()
-        self.encryptor_rsa.save_encrypted(self.pic_inf, newfile_name)
+        new_name = fd.asksaveasfilename()
+        self.encryptor_rsa.save_encrypted(self.pic_inf, new_name)
 
     def option7_callback(self):
-        newfile_name = fd.asksaveasfilename()
-        self.encryptor_rsa.save_decrypted(self.pic_inf, newfile_name)
+        new_name = fd.asksaveasfilename()
+        self.encryptor_rsa.save_decrypted(self.pic_inf, new_name)
 
     def option_exit_callback(self):
         exit()

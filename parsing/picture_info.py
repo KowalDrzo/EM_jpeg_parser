@@ -1,3 +1,4 @@
+from typing import List
 from chunks.jpeg_chunk import Chunk
 import chunks.adh as adh
 import chunks.exif as exif
@@ -67,7 +68,7 @@ class PictureInfo:
     def read_adh(self, b_ind) -> int:
 
         length = self.chunk_len(b_ind)
-        self.metadata_chunks.append(adh.ADH_chunk(b_ind, b_ind + length))
+        self.metadata_chunks.append(adh.ADH_chunk(b_ind, b_ind + length, 0xe0))
         self.metadata_chunks[-1].get_info(self.binary_file[b_ind:b_ind + length])
 
         print("Wykryto chunk Application default header długości " + str(length))
@@ -119,7 +120,7 @@ class PictureInfo:
 
         length = self.chunk_len(b_ind)
 
-        self.metadata_chunks.append(exif.EXIF_chunk(b_ind, b_ind + length))
+        self.metadata_chunks.append(exif.EXIF_chunk(b_ind, b_ind + length, 0xe1))
         self.metadata_chunks[-1].parse_exif(self.binary_file[b_ind:b_ind + length])
 
         print("Wykryto chunk Exif długości " + str(length))
@@ -132,7 +133,7 @@ class PictureInfo:
 
         length = self.chunk_len(b_ind)
 
-        self.metadata_chunks.append(Chunk(b_ind, b_ind + length))
+        self.metadata_chunks.append(Chunk(b_ind, b_ind + length, 0xe4))
 
         print("Wykryto chunk APP4 długości " + str(length))
         return b_ind + length
@@ -169,7 +170,7 @@ class PictureInfo:
 
         length = self.chunk_len(b_ind)
         
-        self.metadata_chunks.append(Chunk(b_ind, b_ind + length))
+        self.metadata_chunks.append(Chunk(b_ind, b_ind + length, 0xe2))
 
         print("Wykryto chunk z paletą kolorów długości " + str(length))
         return b_ind + length
