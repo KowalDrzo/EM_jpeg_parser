@@ -2,6 +2,7 @@ import random
 from typing import List, Type
 import sympy
 from sympy.printing.codeprinter import print_fcode
+from encrypting.chunk_editor import ChunkEditor
 
 class Encryptor:
 
@@ -115,24 +116,24 @@ class Encryptor:
         
         new_parts = []
         new_val = 0
-        parts_8_bytes = list(self.divide_blocks(bin_file, 4))
+        parts_8_bytes = list(self.divide_blocks(bin_file, 256))
 
-        print(str(len(bin_file) % 4))
+        print(str(len(bin_file) % 256))
 
         for part in parts_8_bytes:
 
             c = int.from_bytes(part, byteorder="big")
             new_val = pow(c, public_key, N)
 
-            print(str(new_val % 4))
+            print(str(new_val % 256))
 
             if part is parts_8_bytes[-1]:
 
                 print("dl: " + str(len(part)))
-                new_parts += new_val.to_bytes(4, "big")
+                new_parts += new_val.to_bytes(256, "big")
                 print("ostatni")
             else:
-                new_parts += new_val.to_bytes(4, "big")
+                new_parts += new_val.to_bytes(256, "big")
 
         return new_parts
 
@@ -151,21 +152,21 @@ class Encryptor:
     def decrypt(self, private_key, N, bin_file) -> List[bytes]:
         
         original_file = []
-        parts_8_bytes = list(self.divide_blocks(bin_file, 4))
+        parts_8_bytes = list(self.divide_blocks(bin_file, 256))
         new_val = 0
 
         for part in parts_8_bytes:
 
             c = int.from_bytes(part, byteorder="big")
 
-            print(str(c % 4))
+            print(str(c % 256))
 
             new_val = pow(c, private_key, N)
             if part is parts_8_bytes[-1]:
-                original_file += new_val.to_bytes(4, "big")
+                original_file += new_val.to_bytes(256, "big")
                 print("ostatni")
             else:
-                original_file += new_val.to_bytes(4, "big")
+                original_file += new_val.to_bytes(256, "big")
 
         return original_file
 
@@ -186,7 +187,7 @@ class Encryptor:
 
     ################################################################
 
-    def save_encrypted(self, pic_inf, new_name):
+    def save_encrypted(self, pic_inf, new_name, key: int, N: int, decryption: bool):
         
         new_file = open(new_name, "wb")
 
@@ -203,9 +204,12 @@ class Encryptor:
             
             new_file.write(bytes([0xff, nec_chunk.marker]))
             if nec_chunk.marker == 0xda:
+                
                 new_file.write(bytes(pic_inf.binary_file[nec_chunk.begin_ind:nec_chunk.begin_ind + nec_chunk.header_len]))
-                enc = self.encrypt(self.public_key, self.N, pic_inf.binary_file[nec_chunk.begin_ind + nec_chunk.header_len:nec_chunk.end_ind])
-                new_file.write(bytes(enc))
+                enc = self.encrypt(key, N, pic_inf.binary_file[nec_chunk.begin_ind + nec_chunk.header_len:nec_chunk.end_ind])
+                sof_edited = ChunkEditor.edit_for_sof(enc, decryption)
+                new_file.write(bytes(sof_edited))
+            
             else: 
                 new_file.write(bytes(pic_inf.binary_file[nec_chunk.begin_ind:nec_chunk.end_ind]))
 

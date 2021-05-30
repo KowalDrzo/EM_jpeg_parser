@@ -21,6 +21,10 @@ class GuiMenu:
     pic_inf = None
     encryptor_rsa = None
 
+    main_window = Tk()
+    key_entry = Entry(main_window)
+    N_entry = Entry(main_window)
+
     def __init__(self, pic_inf, encryptor):
         self.pic_inf = pic_inf
         self.encryptor_rsa = encryptor
@@ -31,19 +35,18 @@ class GuiMenu:
 
     def display_menu(self):
         
-        main_window = Tk()
-        main_window.geometry("640x480")
-        main_window.title("JPEG Parser")
+        self.main_window.geometry("640x480")
+        self.main_window.title("JPEG Parser")
         
         b_width = 32
-        option1 = Button(main_window, width = b_width, text ="Wyświetl obraz",                          command = self.option1_callback)
-        option2 = Button(main_window, width = b_width, text ="Wypisz informacje o obrazie",             command = self.option2_callback)
-        option3 = Button(main_window, width = b_width, text ="Wyświetl transformatę obrazu",            command = self.option3_callback)
-        option4 = Button(main_window, width = b_width, text ="Zapisz obraz usuwając zbędne metadane",   command = self.option4_callback)
-        option5 = Button(main_window, width = b_width, text ="Wygeneruj klucze RSA",                    command = self.option5_callback)
-        option6 = Button(main_window, width = b_width, text ="Zaszyfruj obraz",                         command = self.option6_callback)
-        option7 = Button(main_window, width = b_width, text ="Odszyfruj obraz",                         command = self.option7_callback)
-        option_exit = Button(main_window, width = b_width, text ="Wyjdź",                               command = self.option_exit_callback)
+        option1 = Button(self.main_window, width = b_width, text ="Wyświetl obraz",                          command = self.option1_callback)
+        option2 = Button(self.main_window, width = b_width, text ="Wypisz informacje o obrazie",             command = self.option2_callback)
+        option3 = Button(self.main_window, width = b_width, text ="Wyświetl transformatę obrazu",            command = self.option3_callback)
+        option4 = Button(self.main_window, width = b_width, text ="Zapisz obraz usuwając zbędne metadane",   command = self.option4_callback)
+        option5 = Button(self.main_window, width = b_width, text ="Wygeneruj klucze RSA",                    command = self.option5_callback)
+        option6 = Button(self.main_window, width = b_width, text ="Zaszyfruj obraz",                         command = self.option6_callback)
+        option7 = Button(self.main_window, width = b_width, text ="Odszyfruj obraz",                         command = self.option7_callback)
+        option_exit = Button(self.main_window, width = b_width, text ="Wyjdź",                               command = self.option_exit_callback)
         
         option1.pack()
         option2.pack()
@@ -52,9 +55,11 @@ class GuiMenu:
         option5.pack()
         option6.pack()
         option7.pack()
+        self.key_entry.pack()
+        self.N_entry.pack()
         option_exit.pack()
 
-        main_window.mainloop()
+        self.main_window.mainloop()
 
     ############################################################################################
 
@@ -76,11 +81,11 @@ class GuiMenu:
 
     def option6_callback(self):
         new_name = fd.asksaveasfilename()
-        self.encryptor_rsa.save_encrypted(self.pic_inf, new_name)
+        self.encryptor_rsa.save_encrypted(self.pic_inf, new_name, int(self.key_entry.get()), int(self.N_entry.get()), False)
 
     def option7_callback(self):
         new_name = fd.asksaveasfilename()
-        self.encryptor_rsa.save_decrypted(self.pic_inf, new_name)
+        self.encryptor_rsa.save_encrypted(self.pic_inf, new_name, int(self.key_entry.get()), int(self.N_entry.get()), True)
 
     def option_exit_callback(self):
         exit()
