@@ -26,36 +26,6 @@ def isPrime(n): #zwraca True jeśli liczba jest pierwsza, test Rabina-Millera je
     
     return sympy.isprime(n)
 
-    """
-    # 0, 1, -ve numbers not prime
-    if n < 2:
-        return False
-
-    # low prime numbers to save time
-    lowPrimes = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97, 101, 103, 107, 109, 113, 127, 131, 137, 139, 149, 151, 157, 163, 167, 173, 179, 181, 191, 193, 197, 199, 211, 223, 227, 229, 233, 239, 241, 251, 257, 263, 269, 271, 277, 281, 283, 293, 307, 311, 313, 317, 331, 337, 347, 349, 353, 359, 367, 373, 379, 383, 389, 397, 401, 409, 419, 421, 431, 433, 439, 443, 449, 457, 461, 463, 467, 479, 487, 491, 499, 503, 509, 521, 523, 541, 547, 557, 563, 569, 571, 577, 587, 593, 599, 601, 607, 613, 617, 619, 631, 641, 643, 647, 653, 659, 661, 673, 677, 683, 691, 701, 709, 719, 727, 733, 739, 743, 751, 757, 761, 769, 773, 787, 797, 809, 811, 821, 823, 827, 829, 839, 853, 857, 859, 863, 877, 881, 883, 887, 907, 911, 919, 929, 937, 941, 947, 953, 967, 971, 977, 983, 991, 997]
-
-    # if in lowPrimes
-    if n in lowPrimes:
-        return True
-
-    # if low primes divide into n
-    for prime in lowPrimes:
-        if n % prime == 0:
-            return False
-    
-    # find number c such that c * 2 ^ r = n - 1
-    c = n - 1 # c even bc n not divisible by 2
-    while c % 2 == 0:
-        c /= 2 # make c odd
-
-    # prove not prime 128 times
-    for i in range(128):
-        if not rabinMiller(n, c):
-            return False
-
-    return True
-    """
-
 def generateKeys(keysize=1024):
     public_key = private_key = N = 0
 
@@ -129,23 +99,38 @@ def modular_inverse(a, b): #generuje
 
     return x
 
+################################################################
+################################################################
+################################################################
+
 def encrypt(public_key, N, bin_file) -> List[bytes]:
     
     new_parts = []
     new_val = 0
-    parts_8_bytes = list(divide_chunks(bin_file, 256))
+    parts_8_bytes = list(divide_blocks(bin_file, 4))
 
-    print(str(len(bin_file) % 256))
+    print(str(len(bin_file) % 4))
 
     for part in parts_8_bytes:
 
         c = int.from_bytes(part, byteorder="big")
         new_val = pow(c, public_key, N)
-        new_parts += new_val.to_bytes(256, "big")
+
+        print(str(new_val % 4))
+
+        if part is parts_8_bytes[-1]:
+
+            print("dl: " + str(len(part)))
+            new_parts += new_val.to_bytes(4, "big")
+            print("ostatni")
+        else:
+            new_parts += new_val.to_bytes(4, "big")
 
     return new_parts
 
-def divide_chunks(l, n) -> List:
+################################################################
+
+def divide_blocks(l, n) -> List:
     
     new_list = []
     for i in range(0, len(l), n):
@@ -153,31 +138,38 @@ def divide_chunks(l, n) -> List:
 
     return new_list
 
+################################################################
+
 def decrypt(private_key, N, bin_file) -> List[bytes]:
     
     original_file = []
-    parts_8_bytes = list(divide_chunks(bin_file, 256))
+    parts_8_bytes = list(divide_blocks(bin_file, 4))
     new_val = 0
 
     for part in parts_8_bytes:
+
         c = int.from_bytes(part, byteorder="big")
+
+        print(str(c % 4))
+
         new_val = pow(c, private_key, N)
         if part is parts_8_bytes[-1]:
-            original_file += new_val.to_bytes(139, "big")
+            original_file += new_val.to_bytes(4, "big")
             print("ostatni")
         else:
-            original_file += new_val.to_bytes(256, "big")
+            original_file += new_val.to_bytes(4, "big")
 
     return original_file
 
+################################################################
 
-keysize = 1024
+keysize = 16
 
 public_key, private_key, N = generateKeys(keysize)
 
 print("Wczytuję")
 
-file = open("testowy.jpg", "rb")
+file = open("Patyczak.jpg", "rb")
 bin_file = list(file.read())
 file.close()
 
