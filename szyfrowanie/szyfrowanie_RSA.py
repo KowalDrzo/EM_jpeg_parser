@@ -131,7 +131,6 @@ def modular_inverse(a, b): #generuje
 
 def encrypt(public_key, N, bin_file) -> List[bytes]:
     
-    new_file = []
     new_parts = []
     new_val = 0
     parts_8_bytes = divide_chunks(bin_file, 256)
@@ -146,8 +145,11 @@ def encrypt(public_key, N, bin_file) -> List[bytes]:
 
 def divide_chunks(l, n) -> List:
     
-    for i in range(0, len(l), n): 
-        yield l[i:i + n]
+    new_list = []
+    for i in range(0, len(l), n):
+        new_list.append(l[i:i + n])
+
+    return new_list
 
 def decrypt(private_key, N, bin_file) -> List[bytes]:
     
@@ -169,7 +171,7 @@ public_key, private_key, N = generateKeys(keysize)
 
 print("Wczytuję")
 
-file = open("../Obraz/Patyczak.jpg", "rb")
+file = open("Patyczak.jpg", "rb")
 bin_file = list(file.read())
 file.close()
 
