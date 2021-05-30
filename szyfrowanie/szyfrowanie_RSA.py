@@ -134,37 +134,36 @@ def encrypt(public_key, N, bin_file) -> List[bytes]:
     new_file = []
     new_parts = []
     new_val = 0
-    parts_8_bytes = divide_chunks(bin_file, 8)
+    parts_8_bytes = divide_chunks(bin_file, 256)
 
     for part in parts_8_bytes:
 
         c = int.from_bytes(part, byteorder="big")
         new_val = pow(c, public_key, N)
-        new_parts += new_val.to_bytes(8, "big")
+        new_parts += new_val.to_bytes(256, "big")
 
     return new_parts
 
-def divide_chunks(l, n):
-      
-    # looping till length l
+def divide_chunks(l, n) -> List:
+    
     for i in range(0, len(l), n): 
         yield l[i:i + n]
 
 def decrypt(private_key, N, bin_file) -> List[bytes]:
     
     original_file = []
-    parts_8_bytes = divide_chunks(bin_file, 8)
+    parts_8_bytes = divide_chunks(bin_file, 256)
     new_val = 0
 
     for part in parts_8_bytes:
         c = int.from_bytes(part, byteorder="big")
         new_val = pow(c, private_key, N)
-        original_file += new_val.to_bytes(8, "big")
+        original_file += new_val.to_bytes(256, "big")
 
     return original_file
 
 
-keysize = 16
+keysize = 1024
 
 public_key, private_key, N = generateKeys(keysize)
 
