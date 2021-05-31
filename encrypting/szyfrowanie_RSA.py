@@ -112,7 +112,7 @@ class Encryptor:
     ################################################################
     ################################################################
 
-    def encrypt(self, public_key, N, bin_file) -> List[bytes], int:
+    def encrypt(self, public_key, N, bin_file) -> List[bytes]:
         
         new_parts = []
         new_val = 0
@@ -127,9 +127,10 @@ class Encryptor:
             new_val = pow(c, public_key, N)
             new_parts += new_val.to_bytes(256, "big")
 
+        new_parts.insert(0, last_block_size)
         print("Koniec RSA")
 
-        return new_parts, last_block_size
+        return new_parts
 
     ################################################################
 
@@ -204,8 +205,8 @@ class Encryptor:
                 new_file.write(bytes(pic_inf.binary_file[nec_chunk.begin_ind:nec_chunk.begin_ind + nec_chunk.header_len]))
                 
                 if not decryption:
-                    enc, lb_size = self.encrypt(key, N, pic_inf.binary_file[nec_chunk.begin_ind + nec_chunk.header_len:nec_chunk.end_ind])
-                    sof_edited = ChunkEditor.edit_for_sof(enc, decryption, lb_size)
+                    enc = self.encrypt(key, N, pic_inf.binary_file[nec_chunk.begin_ind + nec_chunk.header_len:nec_chunk.end_ind])
+                    sof_edited = ChunkEditor.edit_for_sof(enc, decryption)
                 
                 else:
                     sof_edited = ChunkEditor.edit_for_sof(pic_inf.binary_file[nec_chunk.begin_ind + nec_chunk.header_len:nec_chunk.end_ind], decryption)

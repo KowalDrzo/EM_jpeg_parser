@@ -3,7 +3,7 @@ from typing import List, Type
 class ChunkEditor:
 
     @staticmethod
-    def edit_for_sof(encrypted_sof: List[int], decryption: bool, last_block_size: int) -> List[int]:
+    def edit_for_sof(encrypted_sof: List[int], decryption: bool) -> List[int]:
         
         if not decryption:
 
@@ -13,8 +13,8 @@ class ChunkEditor:
                 if element == 0xff:
                     encrypted_sof.insert(i, 0x00)
             
-            encrypted_sof.insert(0, last_block_size)
-            print("dodany bajt: " + str(encrypted_sof[0]))
+            #encrypted_sof.insert(0, last_block_size)
+            #print("dodany bajt: " + str(encrypted_sof[0]))
 
         else:
             i = 0
