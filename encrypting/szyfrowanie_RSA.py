@@ -112,30 +112,24 @@ class Encryptor:
     ################################################################
     ################################################################
 
-    def encrypt(self, public_key, N, bin_file) -> List[bytes]:
+    def encrypt(self, public_key, N, bin_file) -> List[bytes], int:
         
         new_parts = []
         new_val = 0
         parts_8_bytes = list(self.divide_blocks(bin_file, 256))
+        last_block_size = len(bin_file) % 256
 
-        print(str(len(bin_file) % 256))
+        print("Szyfruję RSA")
 
         for part in parts_8_bytes:
 
             c = int.from_bytes(part, byteorder="big")
             new_val = pow(c, public_key, N)
+            new_parts += new_val.to_bytes(256, "big")
 
-            print(str(new_val % 256))
+        print("Koniec RSA")
 
-            if part is parts_8_bytes[-1]:
-
-                print("dl: " + str(len(part)))
-                new_parts += new_val.to_bytes(256, "big")
-                print("ostatni")
-            else:
-                new_parts += new_val.to_bytes(256, "big")
-
-        return new_parts
+        return new_parts, last_block_size
 
     ################################################################
 
@@ -152,6 +146,8 @@ class Encryptor:
     def decrypt(self, private_key, N, bin_file) -> List[bytes]:
         
         original_file = []
+        last_block_size = bin_file.pop(0)
+        print(last_block_size)
         parts_8_bytes = list(self.divide_blocks(bin_file, 256))
         new_val = 0
 
@@ -159,11 +155,9 @@ class Encryptor:
 
             c = int.from_bytes(part, byteorder="big")
 
-            print(str(c % 256))
-
             new_val = pow(c, private_key, N)
             if part is parts_8_bytes[-1]:
-                original_file += new_val.to_bytes(256, "big")
+                original_file += new_val.to_bytes(last_block_size, "big")
                 print("ostatni")
             else:
                 original_file += new_val.to_bytes(256, "big")
@@ -208,8 +202,15 @@ class Encryptor:
             if nec_chunk.marker == 0xda:
                 
                 new_file.write(bytes(pic_inf.binary_file[nec_chunk.begin_ind:nec_chunk.begin_ind + nec_chunk.header_len]))
-                enc = self.encrypt(key, N, pic_inf.binary_file[nec_chunk.begin_ind + nec_chunk.header_len:nec_chunk.end_ind])
-                sof_edited = ChunkEditor.edit_for_sof(enc, decryption)
+                
+                if not decryption:
+                    enc, lb_size = self.encrypt(key, N, pic_inf.binary_file[nec_chunk.begin_ind + nec_chunk.header_len:nec_chunk.end_ind])
+                    sof_edited = ChunkEditor.edit_for_sof(enc, decryption, lb_size)
+                
+                else:
+                    sof_edited = ChunkEditor.edit_for_sof(pic_inf.binary_file[nec_chunk.begin_ind + nec_chunk.header_len:nec_chunk.end_ind], decryption)
+                    enc = self.decrypt(key, N, sof_edited)
+                
                 new_file.write(bytes(sof_edited))
 
             elif encrypt_tabs and (nec_chunk.marker == 0xdb or nec_chunk.marker == 0xc4):
