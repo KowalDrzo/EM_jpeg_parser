@@ -4,70 +4,40 @@ import sympy
 from sympy.printing.codeprinter import print_fcode
 from encrypting.chunk_editor import ChunkEditor
 
+"""
+OPIS TODO!!!
+"""
+
 class Encryptor:
 
-    end_block_size = 0
-    
-    public_key = 0
-    private_key = 0
-    N = 0
-
-    def rabinMiller(self, n, private_key):
-        a = random.randint(2, (n - 2) - 2)
-        x = pow(a, int(private_key), n) # a^private_key%n
-        if x == 1 or x == n - 1:
-            return True
-
-        # square x
-        while private_key != n - 1:
-            x = pow(x, 2, n)
-            private_key *= 2
-
-            if x == 1:
-                return False
-            elif x == n - 1:
-                return True
-        
-        # is not prime
-        return False
-
-    def isPrime(self, n): #zwraca True jeśli liczba jest pierwsza, test Rabina-Millera jeśli jest niepewna
-        
-        return sympy.isprime(n)
+    """
+    OPIS TODO!!!
+    """
 
     def generateKeys(self, keysize=1024):
         public_key = private_key = N = 0
 
-        # generowanie 2 losowych liczb pierwszych
-        p = self.generateLargePrime(keysize) #wygenerowana liczba pierwsza
-        q = self.generateLargePrime(keysize) #druga wygenerowana liczba pierwsza
 
-        #print(f"p: {p}")
-        #print(f"q: {q}")
+        p = sympy.randprime(2 ** (keysize - 1), 2 ** keysize - 1)
+        q = sympy.randprime(2 ** (keysize - 1), 2 ** keysize - 1)
 
-        N = p * q #iloczyn liczb pierwszych
-        totient = (p - 1) * (q - 1) # totient
+        N = p * q
+        totient = (p - 1) * (q - 1)
 
-        # choose public_key
-        # public_key jest względnie pierwsze z totientem & 1 < public_key <= totient
         while True:
-            public_key = random.randrange(2 ** (keysize - 1), 2 ** keysize - 1) #klucz publiczny
-            if (self.isCoPrime(public_key, totient)): #sprawdzenie czy public_key jest względnie pierwsza z tocjentem
+            public_key = random.randrange(2 ** (keysize - 1), 2 ** keysize - 1)
+            if (self.isCoPrime(public_key, totient)):
                 break
 
-        # wybór private_key
-        # private_key jest odwrotnością modularną public_key z totientem, public_key * private_key (mod totient) = 1
-        private_key = self.modular_inverse(public_key, totient) #klucz prywatny
+        private_key = self.modular_inverse(public_key, totient)
 
         return public_key, private_key, N
 
-    def generateLargePrime(self, keysize):
-        """
-            return random large prime number of keysize bits in size
-        """
+    ################################################################
 
-        return sympy.randprime(2 ** (keysize - 1), 2 ** keysize - 1)
-
+    """
+    OPIS TODO!!!
+    """
 
     def isCoPrime(self, p, q):
         """
@@ -77,6 +47,12 @@ class Encryptor:
 
         return self.gcd(p, q) == 1
 
+    ################################################################
+
+    """
+    OPIS TODO!!!
+    """
+
     def gcd(self, p, q):
         """
             euclidean algorithm to find gcd of p and q
@@ -85,6 +61,12 @@ class Encryptor:
         while q:
             p, q = q, p % q
         return p
+
+    ################################################################
+
+    """
+    OPIS TODO!!!
+    """
 
     def egcd(self, a, b):
         s = 0; old_s = 1
@@ -97,10 +79,16 @@ class Encryptor:
             old_s, s = s, old_s - quotient * s
             old_t, t = t, old_t - quotient * t
 
-        # return gcd, x, y
         return old_r, old_s, old_t
 
-    def modular_inverse(self, a, b): #generuje 
+    ################################################################
+
+    """
+    OPIS TODO!!!
+    """
+
+    def modular_inverse(self, a, b):
+
         gcd, x, y = self.egcd(a, b)
 
         if x < 0:
