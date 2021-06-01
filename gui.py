@@ -7,6 +7,7 @@ from parsing.bf_parser  import parse_jpg
 from parsing.file_saver import save_jpg
 from parsing.more_info  import more_info_jpg
 from encrypting.szyfrowanie_RSA import Encryptor
+import encrypting.not_compressed_enc as nc_enc
 
 from tkinter import *
 import tkinter.filedialog as fd
@@ -48,9 +49,12 @@ class GuiMenu:
         option5 = Button(self.main_window, width = b_width, text ="Wygeneruj klucze RSA",                    command = self.option5_callback)
         option6 = Button(self.main_window, width = b_width, text ="Zaszyfruj obraz",                         command = self.option6_callback)
         option7 = Button(self.main_window, width = b_width, text ="Odszyfruj obraz",                         command = self.option7_callback)
+        option8 = Button(self.main_window, width = b_width, text ="Szyfrowanie nieskompresowanego...",       command = self.option8_callback)
         option_exit = Button(self.main_window, width = b_width, text ="Wyjdź",                               command = self.option_exit_callback)
         
         tabs_box = Checkbutton(self.main_window,  text="Szyfrowanie także tabel kwantyzacji i huffmanna",     variable = self.check_tabs)
+        key_text = Label(self.main_window, text="Klucz:")
+        N_text = Label(self.main_window, text="N:")
 
         option1.pack()
         option2.pack()
@@ -59,9 +63,12 @@ class GuiMenu:
         option5.pack()
         option6.pack()
         option7.pack()
+        option8.pack()
 
         tabs_box.pack()
+        key_text.pack()
         self.key_entry.pack()
+        N_text.pack()
         self.N_entry.pack()
         option_exit.pack()
 
@@ -83,9 +90,13 @@ class GuiMenu:
         save_jpg(self.pic_inf, new_name)
 
     def option5_callback(self):
-        N_entry_text = self.encryptor_rsa.showGeneratedKeys()
+        N_entry_texts = self.encryptor_rsa.showGeneratedKeys()
+        
         self.N_entry.delete(0, END)
-        self.N_entry.insert(0, N_entry_text)
+        self.N_entry.insert(0, N_entry_texts[0])
+        
+        self.key_entry.delete(0, END)
+        self.key_entry.insert(0, N_entry_texts[1])
 
     def option6_callback(self):
         new_name = fd.asksaveasfilename()
@@ -94,6 +105,9 @@ class GuiMenu:
     def option7_callback(self):
         new_name = fd.asksaveasfilename()
         self.encryptor_rsa.save_encrypted(self.pic_inf, new_name, int(self.key_entry.get()), int(self.N_entry.get()), True, self.check_tabs.get())
+
+    def option8_callback(self):
+        nc_enc.encrypt_not_compressed("Obraz/testowy.jpg", "Obraz/testowy4.jpg", int(self.key_entry.get()), int(self.N_entry.get()))
 
     def option_exit_callback(self):
         exit()

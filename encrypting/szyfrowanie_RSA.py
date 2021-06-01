@@ -169,18 +169,22 @@ class Encryptor:
     ################################################################
     ################################################################
 
-    def showGeneratedKeys(self) -> str:
+    def showGeneratedKeys(self) -> List[str]:
         
-        self.public_key, self.private_key, self.N = self.generateKeys()
+        public_key, private_key, N = self.generateKeys()
+        retList = []
 
         print("\nNowy klucz publiczny:")
-        print(self.public_key)
+        print(public_key)
         print("\nNowy klucz prywatny:")
-        print(self.private_key)
+        print(private_key)
         print("\nNowy modulator:")
-        print(self.N)
+        print(N)
 
-        return str(self.N)
+        retList.append(str(N))
+        retList.append(str(public_key))
+
+        return retList
 
     ################################################################
 
