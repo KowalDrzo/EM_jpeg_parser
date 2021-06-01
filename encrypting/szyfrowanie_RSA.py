@@ -116,6 +116,7 @@ class Encryptor:
             new_parts += new_val.to_bytes(256, "big")
 
         new_parts.insert(0, last_block_size)
+        print(new_parts[0])
         print("Koniec RSA")
 
         return new_parts

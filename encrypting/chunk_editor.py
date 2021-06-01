@@ -12,9 +12,6 @@ class ChunkEditor:
                 i += 1
                 if element == 0xff:
                     encrypted_sof.insert(i, 0x00)
-            
-            #encrypted_sof.insert(0, last_block_size)
-            #print("dodany bajt: " + str(encrypted_sof[0]))
 
         else:
             i = 0
