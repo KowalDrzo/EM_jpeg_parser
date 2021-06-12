@@ -11,32 +11,34 @@ OPIS TODO!!!
 class Encryptor:
 
     """
-    OPIS TODO!!!
+    Generowanie klucza publicznego i prywatnego
     """
 
-    def generateKeys(self, keysize=1024):
+    def generateKeys(self, key_size=1024):
         public_key = private_key = N = 0
+        #N - iloczyn liczb pierwszych
 
+        #generowanie 2 losowych liczb pierwszych
+        p = sympy.randprime(2 ** (key_size - 1), 2 ** key_size - 1) 
+        q = sympy.randprime(2 ** (key_size - 1), 2 ** key_size - 1)
 
-        p = sympy.randprime(2 ** (keysize - 1), 2 ** keysize - 1)
-        q = sympy.randprime(2 ** (keysize - 1), 2 ** keysize - 1)
+        N = p * q 
+        totient = (p - 1) * (q - 1) #obliczanie tocjentu
 
-        N = p * q
-        totient = (p - 1) * (q - 1)
-
-        while True:
-            public_key = random.randrange(2 ** (keysize - 1), 2 ** keysize - 1)
-            if (self.isCoPrime(public_key, totient)):
+        while True: 
+            public_key = random.randrange(2 ** (key_size - 1), 2 ** key_size - 1) #losowanie klucza publicznego
+            if (self.isCoPrime(public_key, totient)): #sprawdzanie klucz publiczny jest względnie pierwszy z tocjentem
                 break
 
-        private_key = self.modular_inverse(public_key, totient)
+        private_key = self.modular_inverse(public_key, totient) #generowanie klucza przywatnego, przy pomocy odwrotności modularnej
+    
 
-        return public_key, private_key, N
+        return public_key, private_key, N 
 
     ################################################################
 
     """
-    OPIS TODO!!!
+    funkcja sprawdzająca czy podane jej argumenty są względnie pierwsze, jeśli tak zwraca True
     """
 
     def isCoPrime(self, p, q):
@@ -46,7 +48,7 @@ class Encryptor:
     ################################################################
 
     """
-    OPIS TODO!!!
+    algorytm Euklidesa, znajduje największy wspólny dzielnik p i q
     """
 
     def gcd(self, p, q):
@@ -58,13 +60,13 @@ class Encryptor:
     ################################################################
 
     """
-    OPIS TODO!!!
+    rozszerzony algorytm Euklidesa
     """
 
     def egcd(self, a, b):
         s = 0; old_s = 1
         t = 1; old_t = 0
-        r = b; old_r = a
+        r = b; old_r = a 
 
         while r != 0:
             quotient = old_r // r
@@ -80,11 +82,12 @@ class Encryptor:
     OPIS TODO!!!
     """
 
-    def modular_inverse(self, a, b):
+    def modular_inverse(self, a, b): 
 
         gcd, x, y = self.egcd(a, b)
+        
 
-        if x < 0:
+        if x < 0: ##jeżeli x (klucz prywatny) będzie mniejsze od 0 to dodajemy do niego tocjent
             x += b
 
         return x
@@ -126,7 +129,7 @@ class Encryptor:
 
     ################################################################
 
-    def decrypt(self, private_key, N, bin_file) -> List[bytes]:
+    def decrypt(self, private_key, N, bin_file) -> List[bytes]: 
         
         original_file = []
         last_block_size = bin_file.pop(0)
