@@ -10,7 +10,6 @@ def encrypt_not_compressed(file_name, new_file_name, key, N_val):
     pixels_g = []
     pixels_b = []
 
-    print("Przekształcam plik na pixele")
     for i in range(im.size[0]):
         for j in range(im.size[1]):
 
@@ -21,7 +20,7 @@ def encrypt_not_compressed(file_name, new_file_name, key, N_val):
     
     encryptor = Encryptor()
 
-    print("R")
+    print("\nR")
     pixels_r = encryptor.encrypt(key, N_val, pixels_r)
     print("G")
     pixels_g = encryptor.encrypt(key, N_val, pixels_g)
@@ -36,4 +35,4 @@ def encrypt_not_compressed(file_name, new_file_name, key, N_val):
             im.putpixel((i, j), (pixels_r[place], pixels_g[place], pixels_b[place]))
 
     im.save(new_file_name)
-    print("koniec")
+    print("\nRSA koniec")

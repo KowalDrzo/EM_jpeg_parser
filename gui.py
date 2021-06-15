@@ -2,6 +2,7 @@ from numpy.core.arrayprint import set_string_function
 import fft1
 import show
 import parsing.picture_info as pinf
+import sys
 
 from parsing.bf_parser  import parse_jpg
 from parsing.file_saver import save_jpg
@@ -107,7 +108,8 @@ class GuiMenu:
         self.encryptor_rsa.save_encrypted(self.pic_inf, new_name, int(self.key_entry.get()), int(self.N_entry.get()), True, self.check_tabs.get())
 
     def option8_callback(self):
-        nc_enc.encrypt_not_compressed("Obraz/led1.jpg", "Obraz/testowy4.jpg", int(self.key_entry.get()), int(self.N_entry.get()))
+        new_name = fd.asksaveasfilename()
+        nc_enc.encrypt_not_compressed(sys.argv[1], new_name, int(self.key_entry.get()), int(self.N_entry.get()))
 
     def option_exit_callback(self):
         exit()

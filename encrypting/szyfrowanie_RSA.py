@@ -1,32 +1,36 @@
 import random
-from typing import List, Type
+from typing import List, Final
 import sympy
 from sympy.printing.codeprinter import print_fcode
 from encrypting.chunk_editor import ChunkEditor
 
 """
-OPIS TODO!!!
+Klasa Encryptor posiada wszelkie metody generowania klucza oraz przeprowadzenia szyfrowania i deszyfrowania.
 """
 
 class Encryptor:
+
+    PQ_SIZE : Final = 512
+    WRITE_SIZE : Final = int(PQ_SIZE / 4)
+    BLOCK_SIZE : Final = int(WRITE_SIZE / 2)
 
     """
     Generowanie klucza publicznego i prywatnego
     """
 
-    def generateKeys(self, key_size=1024):
+    def generateKeys(self):
         public_key = private_key = N = 0
         #N - iloczyn liczb pierwszych
 
         #generowanie 2 losowych liczb pierwszych
-        p = sympy.randprime(2 ** (key_size - 1), 2 ** key_size - 1) 
-        q = sympy.randprime(2 ** (key_size - 1), 2 ** key_size - 1)
+        p = sympy.randprime(2 ** (self.PQ_SIZE - 1), 2 ** self.PQ_SIZE - 1) 
+        q = sympy.randprime(2 ** (self.PQ_SIZE - 1), 2 ** self.PQ_SIZE - 1)
 
         N = p * q 
         totient = (p - 1) * (q - 1) #obliczanie tocjentu
 
         while True: 
-            public_key = random.randrange(2 ** (key_size - 1), 2 ** key_size - 1) #losowanie klucza publicznego
+            public_key = random.randrange(2 ** (self.PQ_SIZE - 1), 2 ** self.PQ_SIZE - 1) #losowanie klucza publicznego
             if (self.isCoPrime(public_key, totient)): #sprawdzanie klucz publiczny jest względnie pierwszy z tocjentem
                 break
 
@@ -96,24 +100,32 @@ class Encryptor:
     ################################################################
     ################################################################
 
+    """
+    Metoda szyfrująca.
+    """
+
     def encrypt(self, public_key, N, bin_file) -> List[bytes]:
         
         new_parts = []
         new_val = 0
-        blocks = list(self.divide_blocks(bin_file, 128))
-        last_block_size = len(bin_file) % 128
+        blocks = list(self.divide_blocks(bin_file, self.BLOCK_SIZE))
+        last_block_size = len(bin_file) % self.BLOCK_SIZE
 
         for part in blocks:
 
             c = int.from_bytes(part, byteorder="big")
             new_val = pow(c, public_key, N)
-            new_parts += new_val.to_bytes(256, "big")
+            new_parts += new_val.to_bytes(self.WRITE_SIZE, "big")
 
         new_parts.insert(0, last_block_size)
 
         return new_parts
 
     ################################################################
+
+    """
+    Metoda dzieląca listę bajtów na bloki.
+    """
 
     def divide_blocks(self, l, n) -> List:
         
@@ -125,12 +137,16 @@ class Encryptor:
 
     ################################################################
 
+    """
+    Metoda deszyfrująca.
+    """
+
     def decrypt(self, private_key, N, bin_file) -> List[bytes]: 
         
         original_file = []
         last_block_size = bin_file.pop(0)
 
-        blocks = list(self.divide_blocks(bin_file, 256))
+        blocks = list(self.divide_blocks(bin_file, self.WRITE_SIZE))
         new_val = 0
 
         for part in blocks:
@@ -141,13 +157,17 @@ class Encryptor:
             if part is blocks[-1]:
                 original_file += new_val.to_bytes(last_block_size, "big")
             else:
-                original_file += new_val.to_bytes(128, "big")
+                original_file += new_val.to_bytes(self.BLOCK_SIZE, "big")
 
         return original_file
 
     ################################################################
     ################################################################
     ################################################################
+
+    """
+    Metoda wyświetlająca klucze.
+    """
 
     def showGeneratedKeys(self) -> List[str]:
         
@@ -167,6 +187,10 @@ class Encryptor:
         return retList
 
     ################################################################
+
+    """
+    Metoda przeprowadzająca cały proces szyfrowania i deszyfrowania.
+    """
 
     def save_encrypted(self, pic_inf, new_name, key: int, N: int, decryption: bool, encrypt_tabs: bool):
         
