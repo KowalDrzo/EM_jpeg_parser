@@ -107,11 +107,14 @@ class Encryptor:
 
         for part in parts_8_bytes:
 
+            print(part)
             c = int.from_bytes(part, byteorder="big")
             new_val = pow(c, public_key, N)
             new_parts += new_val.to_bytes(256, "big")
+            print(new_parts)
 
         new_parts.insert(0, last_block_size)
+        print(new_parts)
         print(new_parts[0])
         print("Koniec RSA")
 
@@ -134,21 +137,23 @@ class Encryptor:
         original_file = []
         last_block_size = bin_file.pop(0)
         print(last_block_size)
-        parts_8_bytes = list(self.divide_blocks(bin_file, 128))
+        parts_8_bytes = list(self.divide_blocks(bin_file, 256))
         new_val = 0
 
         print("Deszyfruję RSA")
 
         for part in parts_8_bytes:
 
+            print(part)
             c = int.from_bytes(part, byteorder="big")
 
             new_val = pow(c, private_key, N)
             if part is parts_8_bytes[-1]:
-                original_file += new_val.to_bytes(256, "big")
+                original_file += new_val.to_bytes(last_block_size, "big")
                 print("Koniec RSA")
             else:
-                original_file += new_val.to_bytes(256, "big")
+                original_file += new_val.to_bytes(128, "big")
+            print(original_file)
 
         return original_file
 
@@ -203,14 +208,14 @@ class Encryptor:
                     sof_edited = ChunkEditor.edit_for_sof(pic_inf.binary_file[nec_chunk.begin_ind + nec_chunk.header_len:nec_chunk.end_ind], decryption)
                     enc = self.decrypt(key, N, sof_edited)
                 
-                new_file.write(bytes(sof_edited))
+                new_file.write(bytes(enc))
 
             elif encrypt_tabs and (nec_chunk.marker == 0xdb or nec_chunk.marker == 0xc4):
 
-                    enc = self.encrypt(key, N, pic_inf.binary_file[nec_chunk.begin_ind+2:nec_chunk.end_ind])
-                    new_len = ChunkEditor.edit_for_tabs(enc)
-                    new_file.write(bytes(new_len))
-                    new_file.write(bytes(enc))
+                enc = self.encrypt(key, N, pic_inf.binary_file[nec_chunk.begin_ind+2:nec_chunk.end_ind])
+                new_len = ChunkEditor.edit_for_tabs(enc)
+                new_file.write(bytes(new_len))
+                new_file.write(bytes(enc))
             
             else: 
                 new_file.write(bytes(pic_inf.binary_file[nec_chunk.begin_ind:nec_chunk.end_ind]))
