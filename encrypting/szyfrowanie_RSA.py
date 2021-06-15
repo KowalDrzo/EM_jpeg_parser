@@ -103,20 +103,13 @@ class Encryptor:
         parts_8_bytes = list(self.divide_blocks(bin_file, 128))
         last_block_size = len(bin_file) % 128
 
-        print("Szyfruję RSA")
-
         for part in parts_8_bytes:
 
-            print(part)
             c = int.from_bytes(part, byteorder="big")
             new_val = pow(c, public_key, N)
             new_parts += new_val.to_bytes(256, "big")
-            print(new_parts)
 
         new_parts.insert(0, last_block_size)
-        print(new_parts)
-        print(new_parts[0])
-        print("Koniec RSA")
 
         return new_parts
 
@@ -140,20 +133,15 @@ class Encryptor:
         parts_8_bytes = list(self.divide_blocks(bin_file, 256))
         new_val = 0
 
-        print("Deszyfruję RSA")
-
         for part in parts_8_bytes:
 
-            print(part)
             c = int.from_bytes(part, byteorder="big")
 
             new_val = pow(c, private_key, N)
             if part is parts_8_bytes[-1]:
                 original_file += new_val.to_bytes(last_block_size, "big")
-                print("Koniec RSA")
             else:
                 original_file += new_val.to_bytes(128, "big")
-            print(original_file)
 
         return original_file
 
@@ -195,6 +183,8 @@ class Encryptor:
         # Zapis zmienionych danych właściwych:
         for nec_chunk in pic_inf.necessary_chunks:
             
+            #####################################################################################
+            # Dane obrazu za Sos:
             new_file.write(bytes([0xff, nec_chunk.marker]))
             if nec_chunk.marker == 0xda:
                 
@@ -210,17 +200,29 @@ class Encryptor:
                 
                 new_file.write(bytes(enc))
 
+
+            #####################################################################################
+            # Tabele kwantyzacji i Huffmanna:
+
             elif encrypt_tabs and (nec_chunk.marker == 0xdb or nec_chunk.marker == 0xc4):
 
-                enc = self.encrypt(key, N, pic_inf.binary_file[nec_chunk.begin_ind+2:nec_chunk.end_ind])
-                new_len = ChunkEditor.edit_for_tabs(enc)
+                if not decryption:
+                
+                    enc_or_dec = self.encrypt(key, N, pic_inf.binary_file[nec_chunk.begin_ind+2:nec_chunk.end_ind])
+
+                else:
+
+                    enc_or_dec = self.decrypt(key, N, pic_inf.binary_file[nec_chunk.begin_ind+2:nec_chunk.end_ind])
+
+                new_len = ChunkEditor.edit_for_tabs(enc_or_dec)
                 new_file.write(bytes(new_len))
-                new_file.write(bytes(enc))
+                new_file.write(bytes(enc_or_dec))
             
             else: 
                 new_file.write(bytes(pic_inf.binary_file[nec_chunk.begin_ind:nec_chunk.end_ind]))
 
         # Koniec pliku:
         new_file.write(bytes([0xff, 0xd9]))
+        print("RSA zakończone")
 
         new_file.close()
