@@ -107,7 +107,7 @@ class GuiMenu:
         self.encryptor_rsa.save_encrypted(self.pic_inf, new_name, int(self.key_entry.get()), int(self.N_entry.get()), True, self.check_tabs.get())
 
     def option8_callback(self):
-        nc_enc.encrypt_not_compressed("Obraz/testowy.jpg", "Obraz/testowy4.jpg", int(self.key_entry.get()), int(self.N_entry.get()))
+        nc_enc.encrypt_not_compressed("Obraz/led1.jpg", "Obraz/testowy4.jpg", int(self.key_entry.get()), int(self.N_entry.get()))
 
     def option_exit_callback(self):
         exit()
