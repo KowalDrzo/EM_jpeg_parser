@@ -1,4 +1,4 @@
-from typing import List, Type
+from typing import List
 
 class ChunkEditor:
 
@@ -32,5 +32,4 @@ class ChunkEditor:
         new_lenght[1] = len_num & 0xff
         new_lenght[0] = (len_num >> 8) & 0xff
 
-        print(new_lenght)
         return new_lenght

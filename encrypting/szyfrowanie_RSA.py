@@ -100,10 +100,10 @@ class Encryptor:
         
         new_parts = []
         new_val = 0
-        parts_8_bytes = list(self.divide_blocks(bin_file, 128))
+        blocks = list(self.divide_blocks(bin_file, 128))
         last_block_size = len(bin_file) % 128
 
-        for part in parts_8_bytes:
+        for part in blocks:
 
             c = int.from_bytes(part, byteorder="big")
             new_val = pow(c, public_key, N)
@@ -129,16 +129,16 @@ class Encryptor:
         
         original_file = []
         last_block_size = bin_file.pop(0)
-        print(last_block_size)
-        parts_8_bytes = list(self.divide_blocks(bin_file, 256))
+
+        blocks = list(self.divide_blocks(bin_file, 256))
         new_val = 0
 
-        for part in parts_8_bytes:
+        for part in blocks:
 
             c = int.from_bytes(part, byteorder="big")
 
             new_val = pow(c, private_key, N)
-            if part is parts_8_bytes[-1]:
+            if part is blocks[-1]:
                 original_file += new_val.to_bytes(last_block_size, "big")
             else:
                 original_file += new_val.to_bytes(128, "big")
